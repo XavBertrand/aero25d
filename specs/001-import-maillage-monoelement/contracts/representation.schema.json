@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aero25d:mesh:representation:1",
+  "title": "Description explicite de la représentation plane 1.1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "enum": [
+        "1.1",
+        "1.2"
+      ]
+    },
+    "representation_id": {
+      "const": "planar-euclidean-v1"
+    },
+    "geometry_mode": {
+      "enum": [
+        "planar_2d",
+        "planar_25d"
+      ]
+    },
+    "source_section": {
+      "const": "line_of_flight_S"
+    },
+    "topology_space": {
+      "const": "logical_i_j"
+    },
+    "physical_section": {
+      "const": "plane_N"
+    },
+    "coordinate_components": {
+      "const": [
+        "xi",
+        "z"
+      ]
+    },
+    "coordinate_dtype": {
+      "const": "float64"
+    },
+    "visual_embedding": {
+      "const": [
+        "xi",
+        "0",
+        "z"
+      ]
+    },
+    "transform_model": {
+      "const": "planar-extrusion-v1"
+    },
+    "metric_model": {
+      "const": "planar-euclidean-v1"
+    },
+    "normal_frame": {
+      "const": "N"
+    },
+    "source_units": {
+      "enum": [
+        "m",
+        "dimensionless"
+      ]
+    },
+    "normal_units": {
+      "enum": [
+        "m",
+        "dimensionless"
+      ]
+    },
+    "work_frame": {
+      "const": "W"
+    },
+    "work_units": {
+      "const": "dimensionless"
+    },
+    "source_mapping": {
+      "type": "string",
+      "minLength": 1
+    },
+    "conical_status": {
+      "const": "not_supported"
+    },
+    "solution_fields": {
+      "const": "not_computed"
+    }
+  },
+  "required": [
+    "schema_version",
+    "representation_id",
+    "geometry_mode",
+    "source_section",
+    "topology_space",
+    "physical_section",
+    "coordinate_components",
+    "coordinate_dtype",
+    "visual_embedding",
+    "transform_model",
+    "metric_model",
+    "normal_frame",
+    "source_units",
+    "normal_units",
+    "work_frame",
+    "work_units",
+    "source_mapping",
+    "conical_status",
+    "solution_fields"
+  ]
+}

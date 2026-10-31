@@ -1,0 +1,27 @@
+# Exemple équivalent au JSON voisin ; fixtures à construire, aucun résultat revendiqué.
+schema_version: "1.2"
+kind: mesh_campaign
+campaign_id: qualification-base
+profiles:
+  - id: thin
+    input: ../../../../tests/data/V01/profile.dat
+    units: dimensionless
+  - id: thick
+    input: ../../../../tests/data/V03/profile.dat
+    units: dimensionless
+    hints:
+      trailing_edge_kind: thick
+      confirm_straight_base_closure: true
+configurations:
+  - id: thin-base
+    config: ../../../../tests/data/configs/V01.json
+  - id: thick-base
+    config: ../../../../tests/data/configs/V03.json
+expansion:
+  mode: points
+  points:
+    - {id: thin25, profile_id: thin, sweep_deg: 25, configuration_id: thin-base, level: 0}
+    - {id: thick25, profile_id: thick, sweep_deg: 25, configuration_id: thick-base, level: 0}
+execution:
+  mode: sequential
+  on_failure: continue

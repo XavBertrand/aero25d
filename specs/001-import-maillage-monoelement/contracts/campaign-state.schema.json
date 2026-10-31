@@ -1,0 +1,376 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aero25d:mesh:campaign-state:1",
+  "title": "Photographie résolue et état de campagne v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kind",
+    "campaign_id",
+    "attempt_id",
+    "previous_attempt",
+    "artifact",
+    "phase",
+    "status",
+    "valid",
+    "exit_code",
+    "key_version",
+    "request",
+    "inputs",
+    "compatibility",
+    "points",
+    "generation_attempts",
+    "summary",
+    "events",
+    "diagnostics",
+    "future_flight_status"
+  ],
+  "properties": {
+    "schema_version": {
+      "enum": [
+        "1.0",
+        "1.1",
+        "1.2"
+      ]
+    },
+    "kind": {
+      "const": "mesh_campaign"
+    },
+    "campaign_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "attempt_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "previous_attempt": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "artifact": {
+      "enum": [
+        "resolved",
+        "state"
+      ]
+    },
+    "phase": {
+      "enum": [
+        "inventory",
+        "execution"
+      ]
+    },
+    "status": {
+      "enum": [
+        "ready",
+        "running",
+        "success",
+        "partial_failure",
+        "stopped",
+        "invalid_request"
+      ]
+    },
+    "valid": {
+      "type": "boolean"
+    },
+    "exit_code": {
+      "enum": [
+        0,
+        2,
+        6,
+        7,
+        8,
+        70
+      ]
+    },
+    "key_version": {
+      "enum": [
+        "effective-mesh-v1",
+        "effective-mesh-v2"
+      ]
+    },
+    "request": {
+      "anyOf": [
+        {
+          "$ref": "urn:aero25d:mesh:campaign:1"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:aero25d:mesh:manifest:1#/$defs/file"
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generator_version",
+        "binary_sha256",
+        "schema_versions",
+        "algorithm_versions",
+        "numeric_environment"
+      ],
+      "properties": {
+        "generator_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "binary_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "schema_versions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "algorithm_versions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "numeric_environment": {
+          "$ref": "urn:aero25d:mesh:manifest:1#/properties/environment"
+        }
+      }
+    },
+    "points": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "point_id",
+          "mesh_case_id",
+          "profile_id",
+          "sweep_deg",
+          "configuration_id",
+          "level",
+          "incidence_deg",
+          "mesh_key",
+          "reuse_key",
+          "effective_parameters",
+          "substitutions",
+          "status",
+          "exit_code",
+          "bundle",
+          "diagnostic_count",
+          "diagnostics",
+          "reuse_rejection_reason"
+        ],
+        "properties": {
+          "point_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "mesh_case_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "profile_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sweep_deg": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 50
+          },
+          "configuration_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "level": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "incidence_deg": {
+            "type": "number"
+          },
+          "mesh_key": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reuse_key": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "effective_parameters": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "substitutions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "needs_input",
+              "unsupported",
+              "failed",
+              "pending",
+              "running",
+              "completed",
+              "reused",
+              "not_run"
+            ]
+          },
+          "exit_code": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "enum": [
+              null,
+              0,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              70
+            ]
+          },
+          "bundle": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "diagnostic_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "diagnostics": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:aero25d:mesh:report:1#/$defs/diagnostic"
+            }
+          },
+          "reuse_rejection_reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "generation_attempts": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "events": {
+      "type": "string",
+      "minLength": 1
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:aero25d:mesh:report:1#/$defs/diagnostic"
+      }
+    },
+    "future_flight_status": {
+      "enum": [
+        "not_provided",
+        "not_executed"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "valid": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "exit_code": {
+            "const": 0
+          },
+          "status": {
+            "enum": [
+              "success",
+              "ready"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schema_version": {
+            "enum": [
+              "1.1",
+              "1.2"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "key_version": {
+            "const": "effective-mesh-v2"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schema_version": {
+            "const": "1.0"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "key_version": {
+            "const": "effective-mesh-v1"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aero25d:mesh:topology:1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "name",
+    "version",
+    "global_node_count",
+    "blocks",
+    "physical_boundaries",
+    "interface_curves",
+    "interfaces"
+  ],
+  "properties": {
+    "schema_version": {
+      "enum": [
+        "1.0",
+        "1.1",
+        "1.2"
+      ]
+    },
+    "name": {
+      "enum": [
+        "thin",
+        "thick"
+      ]
+    },
+    "version": {
+      "type": "string"
+    },
+    "global_node_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "blocks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "block_id",
+          "role",
+          "ni",
+          "nj",
+          "logical_jacobian_sign",
+          "node_array_offset_bytes",
+          "node_array_shape"
+        ],
+        "properties": {
+          "block_id": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "role": {
+            "type": "string"
+          },
+          "ni": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "nj": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "logical_jacobian_sign": {
+            "const": 1
+          },
+          "node_array_offset_bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "node_array_shape": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 2
+            },
+            "minItems": 2,
+            "maxItems": 2
+          }
+        }
+      }
+    },
+    "physical_boundaries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "boundary_id",
+          "kind",
+          "side"
+        ],
+        "properties": {
+          "boundary_id": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "kind": {
+            "enum": [
+              "wall_upper",
+              "wall_lower",
+              "wall_base",
+              "farfield",
+              "outlet"
+            ]
+          },
+          "side": {
+            "$ref": "#/$defs/side"
+          }
+        }
+      }
+    },
+    "interface_curves": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "curve_id",
+          "global_node_ids"
+        ],
+        "properties": {
+          "curve_id": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "global_node_ids": {
+            "type": "array",
+            "minItems": 2,
+            "uniqueItems": true,
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "interfaces": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "interface_id",
+          "curve_id",
+          "a",
+          "b",
+          "a_order",
+          "b_order",
+          "face_normals_opposed"
+        ],
+        "properties": {
+          "interface_id": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "curve_id": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "a": {
+            "$ref": "#/$defs/side"
+          },
+          "b": {
+            "$ref": "#/$defs/side"
+          },
+          "a_order": {
+            "enum": [
+              "canonical",
+              "reversed"
+            ]
+          },
+          "b_order": {
+            "enum": [
+              "canonical",
+              "reversed"
+            ]
+          },
+          "face_normals_opposed": {
+            "const": true
+          }
+        }
+      }
+    },
+    "topology_space": {
+      "const": "logical_i_j"
+    }
+  },
+  "$defs": {
+    "side": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "block_id",
+        "side",
+        "node_start",
+        "node_end"
+      ],
+      "properties": {
+        "block_id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "side": {
+          "enum": [
+            "i_min",
+            "i_max",
+            "j_min",
+            "j_max"
+          ]
+        },
+        "node_start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "node_end": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "schema_version": {
+            "enum": [
+              "1.1",
+              "1.2"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "topology_space"
+        ]
+      }
+    }
+  ]
+}

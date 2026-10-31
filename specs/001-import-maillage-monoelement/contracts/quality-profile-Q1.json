@@ -1,0 +1,348 @@
+{
+  "schema_version": "1.0",
+  "profile_id": "Q1",
+  "status": "initial_design",
+  "reference_length": "original_chord",
+  "frame": "N",
+  "automatic_relaxation": false,
+  "topological_invariants": [
+    "all_cell_vertex_cycles_closed_exactly",
+    "all_logical_maps_positive",
+    "no_duplicate_or_intersecting_cells",
+    "all_internal_faces_have_exactly_one_partner",
+    "all_interfaces_share_same_global_node_ids",
+    "all_interface_face_normals_opposed",
+    "all_external_faces_have_exactly_one_physical_patch",
+    "no_hole_or_overlap_allowed_by_geometric_tolerance",
+    "all_wall_center_and_opposite_vertex_normal_distances_positive"
+  ],
+  "metrics": [
+    {
+      "id": "signed_area",
+      "definition": "Aire polygonale signée calculée avec contrôle d’erreur et coordonnées locales.",
+      "units": "source_unit^2",
+      "scope": "every_cell",
+      "limits": [
+        {
+          "comparator": "gt",
+          "value": 0,
+          "severity": "critical",
+          "condition": null
+        }
+      ],
+      "uncertified_severity": "critical"
+    },
+    {
+      "id": "scaled_jacobian_min",
+      "definition": "Minimum des quatre déterminants bilinéaires de coin divisés par produit des longueurs locales.",
+      "units": "1",
+      "scope": "every_cell",
+      "limits": [
+        {
+          "comparator": "gt",
+          "value": 1e-06,
+          "severity": "critical",
+          "condition": null
+        },
+        {
+          "comparator": "ge",
+          "value": 0.1,
+          "severity": "warning",
+          "condition": null
+        }
+      ],
+      "uncertified_severity": "critical"
+    },
+    {
+      "id": "edge_ratio_min_max",
+      "definition": "Longueur minimale divisée par longueur maximale des quatre arêtes.",
+      "units": "1",
+      "scope": "every_cell",
+      "limits": [
+        {
+          "comparator": "gt",
+          "value": 1e-10,
+          "severity": "critical",
+          "condition": null
+        }
+      ],
+      "uncertified_severity": "critical"
+    },
+    {
+      "id": "area_over_edge_product",
+      "definition": "Aire divisée par produit des longueurs maximale et minimale des quatre arêtes.",
+      "units": "1",
+      "scope": "every_cell",
+      "limits": [
+        {
+          "comparator": "gt",
+          "value": 1e-06,
+          "severity": "critical",
+          "condition": null
+        }
+      ],
+      "uncertified_severity": "critical"
+    },
+    {
+      "id": "closure_residual",
+      "definition": "Norme de somme(n_f L_f) divisée par périmètre, en plus de fermeture exacte du graphe.",
+      "units": "1",
+      "scope": "every_cell",
+      "limits": [
+        {
+          "comparator": "le",
+          "value": 1e-12,
+          "severity": "critical",
+          "condition": null
+        }
+      ],
+      "uncertified_severity": "critical"
+    },
+    {
+      "id": "interface_coordinate_residual_over_c",
+      "definition": "Résidu de relecture entre coordonnées des mêmes IDs globaux, divisé par c originale.",
+      "units": "1",
+      "scope": "every_interface_node",
+      "limits": [
+        {
+          "comparator": "le",
+          "value": 1e-12,
+          "severity": "critical",
+          "condition": null
+        }
+      ],
+      "uncertified_severity": "critical"
+    },
+    {
+      "id": "wall_nonorthogonality_deg",
+      "definition": "Angle entre C−M_f et normale de face vers le fluide.",
+      "units": "deg",
+      "scope": "every_wall_face",
+      "limits": [
+        {
+          "comparator": "le",
+          "value": 10,
+          "severity": "warning",
+          "condition": null
+        },
+        {
+          "comparator": "le",
+          "value": 30,
+          "severity": "critical",
+          "condition": null
+        }
+      ],
+      "uncertified_severity": "critical"
+    },
+    {
+      "id": "internal_nonorthogonality_deg",
+      "definition": "Angle aigu segment des centroïdes/normale de la face commune, maximum des deux côtés.",
+      "units": "deg",
+      "scope": "every_internal_face",
+      "limits": [
+        {
+          "comparator": "le",
+          "value": 45,
+          "severity": "warning",
+          "condition": null
+        },
+        {
+          "comparator": "le",
+          "value": 80,
+          "severity": "critical",
+          "condition": null
+        }
+      ],
+      "uncertified_severity": "critical"
+    },
+    {
+      "id": "normal_spacing_ratio",
+      "definition": "Maximum du rapport de pas normaux voisins et de son inverse, y compris interfaces hors saut déclaré.",
+      "units": "1",
+      "scope": "normal_neighbors",
+      "limits": [
+        {
+          "comparator": "le",
+          "value": 1.25,
+          "severity": "warning",
+          "condition": null
+        },
+        {
+          "comparator": "le",
+          "value": 1.5,
+          "severity": "critical",
+          "condition": null
+        }
+      ],
+      "uncertified_severity": "critical"
+    },
+    {
+      "id": "tangential_spacing_ratio",
+      "definition": "Rapport maximal/inverse des pas tangentiels consécutifs et raccords.",
+      "units": "1",
+      "scope": "tangential_neighbors",
+      "limits": [
+        {
+          "comparator": "le",
+          "value": 1.5,
+          "severity": "warning",
+          "condition": null
+        },
+        {
+          "comparator": "le",
+          "value": 2,
+          "severity": "critical",
+          "condition": null
+        }
+      ],
+      "uncertified_severity": "critical"
+    },
+    {
+      "id": "aspect_singular_ratio",
+      "definition": "Rapport sigma_max/sigma_min du Jacobien local ; direction singulière principale publiée.",
+      "units": "1",
+      "scope": "every_cell",
+      "limits": [
+        {
+          "comparator": "le",
+          "value": 1000.0,
+          "severity": "warning",
+          "condition": null
+        },
+        {
+          "comparator": "le",
+          "value": 10000.0,
+          "severity": "critical",
+          "condition": "inside_boundary_layer AND principal_axis_to_wall_tangent_deg>15"
+        },
+        {
+          "comparator": "le",
+          "value": 1000000.0,
+          "severity": "critical",
+          "condition": "outside_boundary_layer"
+        }
+      ],
+      "uncertified_severity": "critical"
+    },
+    {
+      "id": "polygon_reconstruction_hausdorff_over_c",
+      "definition": "Distance maximale bidirectionnelle polyligne/reconstruction dans le même repère, bornée.",
+      "units": "1",
+      "scope": "whole_contour",
+      "limits": [
+        {
+          "comparator": "le",
+          "value": 0.0001,
+          "severity": "critical",
+          "condition": null
+        }
+      ],
+      "uncertified_severity": "critical"
+    },
+    {
+      "id": "reconstruction_mesh_hausdorff_over_c",
+      "definition": "Distance maximale bidirectionnelle reconstruction/frontière maillée, bornée.",
+      "units": "1",
+      "scope": "whole_wall",
+      "limits": [
+        {
+          "comparator": "le",
+          "value": 1e-05,
+          "severity": "critical",
+          "condition": null
+        }
+      ],
+      "uncertified_severity": "critical"
+    },
+    {
+      "id": "characteristic_position_error_over_c",
+      "definition": "Déplacement maximal des points protégés ou résidu d’aller-retour, dans unités cohérentes.",
+      "units": "1",
+      "scope": "characteristic_points",
+      "limits": [
+        {
+          "comparator": "le",
+          "value": 1e-12,
+          "severity": "critical",
+          "condition": null
+        }
+      ],
+      "uncertified_severity": "critical"
+    },
+    {
+      "id": "analytic_le_radius_relative_error",
+      "definition": "Erreur relative du rayon comparé à la référence analytique dans le même repère.",
+      "units": "1",
+      "scope": "analytic_leading_edge_each_side",
+      "limits": [
+        {
+          "comparator": "le",
+          "value": 0.01,
+          "severity": "critical",
+          "condition": null
+        }
+      ],
+      "uncertified_severity": "critical"
+    },
+    {
+      "id": "corner_angle_error_deg",
+      "definition": "Écart d’angle par rapport aux tangentes de référence du même repère.",
+      "units": "deg",
+      "scope": "protected_corners",
+      "limits": [
+        {
+          "comparator": "le",
+          "value": 0.1,
+          "severity": "critical",
+          "condition": null
+        }
+      ],
+      "uncertified_severity": "critical"
+    },
+    {
+      "id": "first_height_relative_error",
+      "definition": "Valeur absolue de h_first−h_requested divisée par h_requested, par face.",
+      "units": "1",
+      "scope": "every_wall_face",
+      "limits": [
+        {
+          "comparator": "le",
+          "value": 0.02,
+          "severity": "critical",
+          "condition": null
+        }
+      ],
+      "uncertified_severity": "critical"
+    },
+    {
+      "id": "outer_curve_error_over_c",
+      "definition": "Écart maximal des points à la courbe de frontière extérieure prescrite.",
+      "units": "1",
+      "scope": "outer_boundary",
+      "limits": [
+        {
+          "comparator": "le",
+          "value": 1e-12,
+          "severity": "critical",
+          "condition": null
+        }
+      ],
+      "uncertified_severity": "critical"
+    },
+    {
+      "id": "analytic_le_unilateral_radius_relative_difference",
+      "definition": "Écart relatif entre rayons unilatéraux au BA, normalisé par rayon de référence du même repère.",
+      "units": "1",
+      "scope": "analytic_leading_edge",
+      "limits": [
+        {
+          "comparator": "le",
+          "value": 0.01,
+          "severity": "critical",
+          "condition": null
+        }
+      ],
+      "uncertified_severity": "critical"
+    }
+  ]
+}

@@ -1,0 +1,475 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aero25d:mesh:configuration:1",
+  "title": "Configuration demandée du mailleur v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "input",
+    "units",
+    "sweep_deg",
+    "mesh",
+    "quality_profile"
+  ],
+  "properties": {
+    "schema_version": {
+      "enum": [
+        "1.0",
+        "1.1",
+        "1.2"
+      ]
+    },
+    "input": {
+      "type": "string",
+      "minLength": 1
+    },
+    "units": {
+      "enum": [
+        "m",
+        "dimensionless"
+      ],
+      "description": "Échelle déduite du contour original S, avant flèche et normalisation ; voir physical-scale.md (source-scale-v1)."
+    },
+    "physical_chord_m": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "exclusiveMinimum": 0,
+      "description": "m : contrôle de cohérence seulement, tolérance relative 1e-10 sur c_input en m (absolue 0 m), contradiction refusée. dimensionless : conversion m/unité source = physical_chord_m/c_input ; ne suppose pas c_input=1."
+    },
+    "sweep_deg": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 50
+    },
+    "incidence_deg": {
+      "type": "number",
+      "default": 0
+    },
+    "normalization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "chord",
+            "explicit",
+            "none"
+          ]
+        },
+        "translation": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "scale": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "explicit"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "translation",
+              "scale"
+            ]
+          }
+        }
+      ]
+    },
+    "hints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "leading_edge_point": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "segment_id",
+                "t"
+              ],
+              "properties": {
+                "segment_id": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "t": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              }
+            }
+          ]
+        },
+        "upper_lip_point": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "segment_id",
+                "t"
+              ],
+              "properties": {
+                "segment_id": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "t": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              }
+            }
+          ]
+        },
+        "lower_lip_point": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "segment_id",
+                "t"
+              ],
+              "properties": {
+                "segment_id": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "t": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              }
+            }
+          ]
+        },
+        "protected_corner_points": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "uniqueItems": true
+        },
+        "trailing_edge_kind": {
+          "enum": [
+            "thin",
+            "thick"
+          ]
+        },
+        "confirm_straight_base_closure": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "mesh": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "topology",
+        "surface_intervals",
+        "first_height_over_c",
+        "normal_layers",
+        "normal_growth",
+        "outer_layers",
+        "wake_length_over_c",
+        "wake_intervals",
+        "farfield_distance_over_c"
+      ],
+      "properties": {
+        "topology": {
+          "enum": [
+            "auto",
+            "thin",
+            "thick"
+          ]
+        },
+        "surface_intervals": {
+          "type": "integer",
+          "minimum": 4
+        },
+        "leading_edge_concentration": {
+          "type": "number",
+          "minimum": 1,
+          "default": 1
+        },
+        "trailing_edge_concentration": {
+          "type": "number",
+          "minimum": 1,
+          "default": 1
+        },
+        "first_height_over_c": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "normal_layers": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "normal_growth": {
+          "type": "number",
+          "minimum": 1
+        },
+        "outer_layers": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "base_intervals": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "wake_length_over_c": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "wake_intervals": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "farfield_distance_over_c": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "smoothing": {
+          "enum": [
+            "none",
+            "elliptic"
+          ],
+          "default": "elliptic"
+        },
+        "upper_surface_intervals": {
+          "type": "integer",
+          "minimum": 2,
+          "description": "Nu ; Nl=surface_intervals−Nu ; compatibilité interblocs contrôlée sémantiquement."
+        },
+        "base_first_height_over_c": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Défaut : first_height_over_c."
+        },
+        "core_height_over_c": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 0.5
+        },
+        "near_wake_length_over_c": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 2
+        },
+        "near_wake_intervals": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Sous-ensemble de wake_intervals, pas un compte additionnel ; défaut partage déterministe compatible Q1."
+        },
+        "density": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "curvature_weight": {
+              "type": "number",
+              "minimum": 0,
+              "default": 1
+            },
+            "leading_edge_width_over_c": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "default": 0.05
+            },
+            "trailing_edge_width_over_c": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "default": 0.05
+            }
+          }
+        }
+      }
+    },
+    "quality_profile": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Politique qualité de génération et audit par défaut. Les paramètres consommés par lissage/arrêt/sélection participent à mesh_key (generation-quality-v1)."
+    },
+    "geometry_budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "polygon_to_reconstruction_over_c": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 0.0001
+        },
+        "reconstruction_to_mesh_over_c": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1e-05
+        },
+        "characteristic_position_over_c": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1e-12
+        },
+        "analytic_radius_relative": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 0.01
+        },
+        "corner_angle_deg": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 0.1
+        }
+      }
+    },
+    "flow_estimate": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "supplied_friction_velocity"
+          ]
+        },
+        "kinematic_viscosity_m2_s": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "friction_velocity_m_s": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "mode",
+        "kinematic_viscosity_m2_s",
+        "friction_velocity_m_s"
+      ]
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_cells": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_memory_bytes": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "geometry_mode": {
+      "enum": [
+        "planar_2d",
+        "planar_25d"
+      ]
+    },
+    "audit_profiles": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Audits indépendants en lecture seule, noms/chemins relatifs à cette configuration ; défaut [quality_profile]. Ne modifient jamais les coordonnées ni la politique de génération."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "schema_version": {
+            "enum": [
+              "1.1",
+              "1.2"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "geometry_mode"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schema_version": {
+            "const": "1.0"
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": [
+            "geometry_mode"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "geometry_mode"
+        ],
+        "properties": {
+          "geometry_mode": {
+            "const": "planar_2d"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "sweep_deg": {
+            "const": 0
+          }
+        }
+      }
+    }
+  ]
+}

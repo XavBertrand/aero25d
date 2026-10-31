@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aero25d:mesh:quality-profile:1",
+  "title": "Profil de qualité versionné",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "profile_id", "status", "reference_length", "frame", "automatic_relaxation", "topological_invariants", "metrics"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "profile_id": {"type": "string", "minLength": 1},
+    "status": {"enum": ["initial_design", "frozen_for_qualification"]},
+    "reference_length": {"const": "original_chord"},
+    "frame": {"const": "N"},
+    "automatic_relaxation": {"const": false},
+    "topological_invariants": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "metrics": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/metric"}}
+  },
+  "$defs": {
+    "limit": {
+      "type": "object", "additionalProperties": false,
+      "required": ["comparator", "value", "severity", "condition"],
+      "properties": {
+        "comparator": {"enum": ["le", "lt", "ge", "gt", "eq"]},
+        "value": {"type": "number"},
+        "severity": {"enum": ["warning", "critical"]},
+        "condition": {"type": ["string", "null"]}
+      }
+    },
+    "metric": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "definition", "units", "scope", "limits", "uncertified_severity"],
+      "properties": {
+        "id": {"type": "string"}, "definition": {"type": "string"},
+        "units": {"type": "string"}, "scope": {"type": "string"},
+        "limits": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/limit"}},
+        "uncertified_severity": {"const": "critical"}
+      }
+    }
+  }
+}

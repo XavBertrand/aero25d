@@ -1,0 +1,32 @@
+# Exemple de demande uniquement ; aucun résultat produit.
+schema_version: '1.1'
+input: ../../../../tests/data/V01/profile.dat
+units: dimensionless
+sweep_deg: 25
+incidence_deg: 0
+normalization:
+  mode: chord
+mesh:
+  topology: thin
+  surface_intervals: 384
+  leading_edge_concentration: 4
+  trailing_edge_concentration: 2
+  first_height_over_c: 1.0e-05
+  normal_layers: 48
+  normal_growth: 1.15
+  outer_layers: 48
+  base_intervals: null
+  wake_length_over_c: 20
+  wake_intervals: 192
+  farfield_distance_over_c: 10
+  smoothing: elliptic
+  upper_surface_intervals: 192
+  near_wake_intervals: 96
+  near_wake_length_over_c: 2
+  core_height_over_c: 0.5
+quality_profile: Q1
+flow_estimate: null
+resources:
+  max_cells: 10000000
+  max_memory_bytes: 4294967296
+geometry_mode: planar_25d

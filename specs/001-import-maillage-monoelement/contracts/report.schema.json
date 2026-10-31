@@ -1,0 +1,476 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aero25d:mesh:report:1",
+  "title": "Rapport de contrôle v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "operation",
+    "status",
+    "valid",
+    "exit_code",
+    "last_completed_stage",
+    "diagnostics",
+    "counts",
+    "artifacts",
+    "y_plus"
+  ],
+  "properties": {
+    "schema_version": {
+      "enum": [
+        "1.0",
+        "1.1",
+        "1.2"
+      ]
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "operation": {
+      "enum": [
+        "check",
+        "mesh",
+        "quality",
+        "export",
+        "family",
+        "reproduce"
+      ]
+    },
+    "status": {
+      "enum": [
+        "success",
+        "invalid_input",
+        "needs_input",
+        "unsupported",
+        "failed",
+        "invalid_result",
+        "io_error",
+        "resource_limit",
+        "internal_error"
+      ]
+    },
+    "valid": {
+      "type": "boolean"
+    },
+    "exit_code": {
+      "enum": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        70
+      ]
+    },
+    "last_completed_stage": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "quality_profile": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "profile_sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/diagnostic"
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "elements": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "source_points": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "blocks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "nodes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cells": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "checked_cells": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "checked_interfaces": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "critical_defects": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "warnings": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "metric_summary": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/metric"
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "role",
+          "path",
+          "valid"
+        ],
+        "properties": {
+          "role": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "valid": {
+            "type": "boolean"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "y_plus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "method",
+        "reason"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "not_requested",
+            "unavailable",
+            "estimate"
+          ]
+        },
+        "method": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "input": {
+          "type": "object"
+        },
+        "min": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "max": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "wall_face_values": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "geometry_mode": {
+      "anyOf": [
+        {
+          "enum": [
+            "planar_2d",
+            "planar_25d"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "representation_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "$defs": {
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "element_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "point_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "segment_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "block_id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cell_id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "face_id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "interface_id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "i": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "j": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "json_pointer": {
+          "type": "string"
+        },
+        "boundary_id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "export_object_id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "representation": {
+          "enum": [
+            "source",
+            "reconstruction",
+            "mesh_boundary",
+            "interface"
+          ]
+        }
+      }
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "value",
+        "units",
+        "frame",
+        "limit",
+        "method",
+        "uncertainty",
+        "status",
+        "lower_bound",
+        "upper_bound",
+        "comparator"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "units": {
+          "type": "string"
+        },
+        "frame": {
+          "type": "string"
+        },
+        "limit": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "method": {
+          "type": "string"
+        },
+        "uncertainty": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "status": {
+          "enum": [
+            "pass",
+            "warning",
+            "fail",
+            "not_certifiable",
+            "not_applicable"
+          ]
+        },
+        "lower_bound": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "upper_bound": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "comparator": {
+          "enum": [
+            "le",
+            "lt",
+            "ge",
+            "gt",
+            "eq",
+            "interval",
+            "not_applicable"
+          ]
+        }
+      }
+    },
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "severity",
+        "message",
+        "location",
+        "metric",
+        "reason"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]+$"
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "warning",
+            "critical"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "location": {
+          "$ref": "#/$defs/location"
+        },
+        "metric": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/metric"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "schema_version": {
+            "enum": [
+              "1.1",
+              "1.2"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "geometry_mode",
+          "representation_id"
+        ]
+      }
+    }
+  ]
+}
