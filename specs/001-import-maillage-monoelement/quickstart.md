@@ -159,3 +159,26 @@ conique. Les tâches T084–T088 mènent à la revue scientifique G-FORM. T089�
 démonstrateur géométrique fin/épais et JG-C) attendent un go de formulation et J0 accepté.
 Aucune commande conique n’est présentée comme disponible. Les futurs essais d’équations,
 de Cp/Cf et d’efforts sont dans la roadmap, hors réalisation 001.
+
+## Précisions R3 à appliquer lors de la réalisation
+
+Ces parcours restent à implémenter. Les exemples JSON/YAML sont des demandes 1.2 et non
+la preuve d'un run réussi. [L'échelle physique](contracts/physical-scale.md) se mesure dans
+le contour original : mètres seuls suffisent, une indication contradictoire est refusée ;
+en adimensionnel k=L/c_input, même si c_input≠1. Sans échelle, géométrie autorisée mais y+
+unavailable. Flèche/normalisation ne redéfinissent jamais cette échelle.
+
+`quality_profile` est la politique de génération et l'audit par défaut ; `audit_profiles`
+demande plusieurs contrôles indépendants. Pour réauditer :
+`aero25d-mesh quality --bundle run --audit-profile Q1 --out audit --json`, ou
+`client.quality(bundle=run.bundle, audit_profile="Q1", out="audit")`.
+La campagne expose mesh_artifact/audits/estimate/point_result par point : un même maillage
+peut avoir un audit passé et un autre échoué sans que leurs verdicts soient écrasés.
+`--resume --retry-failed` / `resume=True, retry_failed=True` crée de nouvelles tentatives
+des échecs ; la reprise ordinaire peut relire leur échec avec les mêmes paramètres.
+Le paramètre curvature_regularization_over_c a été retiré : le supprimer d'une demande
+ancienne, sans le remplacer par une valeur prétendument active.
+
+T001–T019 reste le premier groupe, aux critères J0 inchangés. La revue scientifique G-FORM
+reste ouverte ; T095 clôt un bilan aussi après no_go sans cocher les tâches coniques non
+applicables. Aucune commande de ce guide n'a été exécutée comme implémentation pendant R3.

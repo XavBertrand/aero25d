@@ -401,6 +401,63 @@
           }
         ]
       }
+    },
+    "physical_scale": {
+      "anyOf": [
+        {
+          "$ref": "urn:aero25d:mesh:physical-scale:1"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "result_records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "key",
+          "key_version",
+          "path",
+          "size_bytes",
+          "sha256"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "mesh",
+              "audit",
+              "estimate",
+              "point"
+            ]
+          },
+          "key": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "key_version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$",
+            "description": "Chemin relatif sans .. ; confinement symlink contrôlé sémantiquement."
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
     }
   },
   "allOf": [
@@ -501,6 +558,21 @@
             "type": "object"
           }
         }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schema_version": {
+            "const": "1.2"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "physical_scale",
+          "result_records"
+        ]
       }
     }
   ],

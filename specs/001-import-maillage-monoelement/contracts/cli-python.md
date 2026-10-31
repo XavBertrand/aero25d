@@ -8,14 +8,14 @@ Nom d'exécutable prévu : `aero25d-mesh`. Toute commande accepte `--help`, `--o
 | --- | --- | --- |
 | Charger, contrôler, reconstruire et visualiser | `aero25d-mesh check --config config.json --out check --json` | Source, géométrie, repères, diagnostics, figures de contours ; aucun maillage requis |
 | Générer et contrôler | `aero25d-mesh mesh --config config.json --out run --json` | Dossier canonique complet ; rapport qualité ; cinq vues |
-| Réinspecter la qualité | `aero25d-mesh quality --bundle run --out audit --json` | Validation d'intégrité puis mesures exhaustives et rapport ; entrée immuable |
+| Réinspecter la qualité | `aero25d-mesh quality --bundle run --audit-profile Q1 --out audit --json` | Validation d'intégrité puis mesures exhaustives et rapport ; entrée immuable |
 | Exporter | `aero25d-mesh export --bundle run --format vtk --out vtk-out --json` | VTP/VTM/VTS et métadonnées de correspondance ; entrée immuable |
 | Famille globale | `aero25d-mesh family --config config.json --levels 0,1,2 --out family --json` | Reconstruction commune, niveaux et comparaison des distributions |
 | Variation ciblée | `aero25d-mesh family --config config.json --study parameter --vary mesh.first_height_over_c --values 0.00001,0.000005 --out height-study --json` | Étude de diagnostic, jamais étiquetée convergence globale |
 | Variation du domaine | `aero25d-mesh family --config config.json --study domain --values 10,20 --out domain-study --json` | Même géométrie et mêmes réglages intérieurs ; frontière éloignée seule modifiée |
 | Reproduire | `aero25d-mesh reproduce --bundle run --out replay --json` | Nouvelle génération et comparaison des données, connectivités et décisions |
 
-`check` fait le contrôle géométrique et la reconstruction avec la même configuration que le maillage. Un fichier multiélément peut être contrôlé et transformé ; il ne produit jamais un maillage partiel. `quality` réutilise le profil archivé et ne permet pas de le relâcher ; un autre profil demandé constitue un nouvel audit explicitement nommé avec résultat distinct, jamais une réécriture du verdict initial. `export` refuse par défaut un bundle invalide ; `--diagnostic-invalid` permet uniquement un export clairement marqué `valid=0` et `INVALID` dans les titres/métadonnées.
+`check` fait le contrôle géométrique et la reconstruction avec la même configuration que le maillage. Un fichier multiélément peut être contrôlé et transformé ; il ne produit jamais un maillage partiel. `quality` utilise par défaut le profil archivé ; `--audit-profile NOM_OU_FICHIER` (Python `client.quality(..., audit_profile=...)`) demande un nouvel audit immuable sous sa propre audit_key. Le profil de génération et le verdict initial restent archivés. Même un audit passé ne remplace pas un échec sous d'autres paramètres. `export` refuse par défaut un bundle invalide ; `--diagnostic-invalid` permet uniquement un export clairement marqué `valid=0` et `INVALID` dans les titres/métadonnées.
 
 Les chemins passés en arguments sont résolus relativement au répertoire courant ; les références internes à une configuration sont relatives à celle-ci. Les chemins archivés dans le bundle sont relatifs au bundle et ne peuvent pas en sortir. Une commande n'exécute jamais de shell ou de programme utilisateur issu d'une configuration.
 
@@ -63,9 +63,9 @@ L'appel structuré de l'exécutable satisfait l'ensemble des parcours, partage e
 
 ## Estimation facultative de y+
 
-Le parcours géométrique n'a besoin d'aucune donnée d'écoulement. Le mode initial `supplied_friction_velocity` exige une échelle physique, une viscosité cinématique ν>0 et une vitesse de frottement estimée par l'utilisateur `u_tau>0`. Il fournit, pour chaque face de paroi, `y_plus_estimate=u_tau*d_center_m/ν`. Le rapport conserve valeurs, unités, origine des données, distance réellement mesurée et hypothèse de `u_tau` uniforme si une unique valeur est fournie. Une valeur uniforme ne prédit pas le frottement local, le stagnation ou le culot.
+Le parcours géométrique n'a besoin d'aucune donnée d'écoulement. Le mode initial `supplied_friction_velocity` demande une viscosité cinématique ν>0 et une vitesse de frottement estimée par l’utilisateur `u_tau>0`. L’échelle est résolue dans S selon [physical-scale.md](physical-scale.md) : mètres directement, ou k=L/c_input. Sans échelle, retour y_plus.status=unavailable avec PHYSICAL_SCALE_UNAVAILABLE, aucune valeur physique et géométrie autorisée. Il fournit, pour chaque face de paroi, `y_plus_estimate=u_tau*d_center_m/ν`. Le rapport conserve valeurs, unités, origine des données, distance réellement mesurée et hypothèse de `u_tau` uniforme si une unique valeur est fournie. Une valeur uniforme ne prédit pas le frottement local, le stagnation ou le culot.
 
-Une corrélation de plaque plane n'est pas retenue initialement : elle ajouterait une hypothèse de frottement local inadaptée au BA, au culot et aux gradients de pression sans être nécessaire à FR-020. Le mode fourni par l'utilisateur résout entièrement ce contrat facultatif, sans décision de corrélation en suspens. Aucun Mach/Reynolds n'est déduit des seules coordonnées. Toute sortie est `status=estimate`, jamais `validated` ou `guaranteed` ; l'objectif futur y+≈0,5–1 ne constitue pas un critère garanti de génération.
+Une corrélation de plaque plane n'est pas retenue initialement : elle ajouterait une hypothèse de frottement local inadaptée au BA, au culot et aux gradients de pression sans être nécessaire à FR-020. Le mode fourni par l'utilisateur résout entièrement ce contrat facultatif, sans décision de corrélation en suspens. Aucun Mach/Reynolds n'est déduit des seules coordonnées. Toute valeur calculée est `status=estimate`, jamais `validated` ou `guaranteed` ; l'objectif futur y+≈0,5–1 ne constitue pas un critère garanti de génération.
 
 ## Campagnes
 
@@ -100,3 +100,15 @@ spécifique ; sa présence ne permet jamais de franchir une validation refusée.
 legacy, les versions de transformation/représentation et les associations sont conservées
 par Result et CampaignResult. Les références des futurs Cp, champs de pression et Cz/Cx/Cm
 sont fixées dans la [roadmap](../../../docs/product-roadmap.md), sans résultat produit dans 001.
+
+## R3 — résultats distincts et parité
+
+Les configurations peuvent demander audit_profiles ; Result.report/result_records et
+CampaignResult.points exposent les références typées mesh/audit/estimate/point (contrat
+[result-identities.md](result-identities.md)), sans les fusionner en un verdict de maillage
+universel. Les tableaux y+ restent propres à leur estimate_key, jamais ajoutés en écrasant
+wall_faces d'un autre audit. `campaign run --resume --retry-failed` correspond exactement
+à `Client.campaign_run(..., resume=True, retry_failed=True)` ; sans resume, code 2.
+Un échec d'audit/estimation garde ses preuves et les références des autres couches.
+`PHYSICAL_CHORD_MISMATCH`/`REMOVED_PARAMETER` donnent code 2 ;
+`PHYSICAL_SCALE_UNCERTIFIED` donne code 4, avec mêmes pointeurs et contexte Python/CLI.

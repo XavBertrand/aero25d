@@ -1,3 +1,7 @@
+> Historique R2 ci-dessous, conservé avec ses correspondances. La révision courante est
+> [R3 — correction des cinq écarts](#r3--correction-des-cinq-écarts) : contrats 1.2, clés v3
+> et branches go/no_go remplacent les règles R2 correspondantes, sans effacer leur historique.
+
 # Réconciliation R2 — inventaire, contradictions et correspondances
 
 **Date** : 2026-10-31. **Autorité** : demande de révision globale des exigences après tâches.
@@ -323,3 +327,145 @@ ne relâche ni preuves ni tolérances. L’analyse courante est dans [tasks-anal
 | `specs/001-import-maillage-monoelement/tasks.md` | révisé |
 | `specs/001-import-maillage-monoelement/topology.md` | révisé |
 | `specs/001-import-maillage-monoelement/verification.md` | révisé |
+
+## R3 — correction des cinq écarts
+
+Date : 2026-10-31. Demande explicite de corrections **documentaires et contractuelles**
+U1/I1/U2/U3/I2, suivies d'une nouvelle analyse Spec Kit en lecture seule. Aucun code produit
+ni test d'acceptation n'existe/n'a été exécuté ; aucun go de J0 ou G-FORM n'est allégué.
+Les outils d'audit rédactionnel sont restés dans /tmp. Constitution et fichiers Q1
+conservés octet pour octet ; aucune évolution de principe ou de seuil qualité.
+
+| Écart | Décision appliquée / correspondance des exigences existantes | Contrat autoritatif |
+| --- | --- | --- |
+| U1 | FR-020/023/024/029/033–040/057 conservées et précisées : point logique, entrées de génération, artefact généré, audits et estimations séparés ; politique qualité consommée par lissage/arrêt incluse dans mesh_key | contracts/result-identities.md, campaign.md, schémas campaign-state/artifact et report/manifest |
+| I1 | FR-052/053/060 et SC-010/011 conservés : T095 clôt un bilan go ou no_go ; tâches T089–T094 non applicables après no_go, jamais réalisées artificiellement | tasks.md, plan.md, conical-study.md |
+| U2 | FR-011/018/045 conservées : retirer curvature_regularization_over_c non consommé, avant T010 ; refus explicite toutes versions ; loi sqrt(c|κ|) justifiée par écart corde–arc et contrôlée indépendamment | geometry-verification.md §5/R3, configuration.schema.json |
+| U3 | FR-006/007/019/020/029 et H-02 conservés : c_input dans S, mètres font autorité, indication cohérence seulement ; adimensionnel L/c_input ; tolérance relative1e-10/absolue0m et bornes archivées | contracts/physical-scale.md et physical-scale.schema.json |
+| I2 | Aucun principe/exigence modifié : constitution 1.0.0 établie le 2026-10-30, 1.1.0 amendée le 2026-10-31 | plan.md / Constitution Check |
+
+60 FR, 12 SC et T001–T095 conservés. Les compléments sont insérés sous les mêmes IDs,
+sans seconde spécification. Contrats initiaux **non publiés** révisés 1.2 ; demandes 1.0/1.1
+lisibles avec migrations explicites archivées, sans accepter le champ inutilisé supprimé ni
+réutiliser aveuglément d'anciens verdicts. Nouvelles clés versionnées distinctes, sans cache
+de solution. Les cinq nouvelles annexes sont des contrats de cette fonctionnalité.
+
+### Correspondance R2 → R3 des tâches modifiées
+
+Toutes ces tâches restent ouvertes/non exécutées ; leurs nouveaux critères devront être
+vérifiés lors de leur future réalisation. Aucun ancien succès à transférer. Le tableau
+R2 précédent conserve la correspondance antérieure ; aucune tâche n'est supprimée, remplacée
+par un autre ID ou réaffectée à une nouvelle fonctionnalité.
+
+| Ancienne tâche | Tâche courante | Critère précisé ou remplacé / revalidation nécessaire |
+| --- | --- | --- |
+| T010 | T010 | U2 : moniteur sans régularisation avant J0 ; échelle/sensibilité/coins/références ; preuves à produire |
+| T021 | T021 | U2/U3/U1 : schémas 1.2, paramètre retiré, échelle et références typées ; preuves à produire |
+| T025 | T025 | U3 : échelle S, tolérance/contradiction, archivage ; U2 : refus du champ retiré ; preuves à produire |
+| T031 | T031 | Propagation des versions 1.2 dans l’acceptation import, mêmes critères ; preuves à produire |
+| T034 | T034 | U2 : réutiliser moniteur J0 ; tests généraux de sensibilité/échelle et stabilité ; preuves à produire |
+| T035 | T035 | U1 : politique consommée par lissage/arrêt dans projection de génération ; preuves à produire |
+| T036 | T036 | U1 : audits multiples immuables et pass/fail coexistants ; preuves à produire |
+| T037 | T037 | U3/U1 : conversion physique unique et estimations multiples séparées ; preuves à produire |
+| T044 | T044 | U1/U3 : contrats de rapports/manifeste/références 1.2 ; preuves à produire |
+| T045 | T045 | U1/U3 : versions de clés et instantanés distincts, échelle archivée ; preuves à produire |
+| T046 | T046 | U1 : stockage des résultats distincts et matérialisation de bundle propre au point ; preuves à produire |
+| T050 | T050 | U1/U2/U3 : --audit-profile, diagnostics d’échelle/champ retiré ; preuves à produire |
+| T051 | T051 | U1/U3 : Python transmet paramètres/références sans calcul ; preuves à produire |
+| T055 | T055 | U1/U2/U3 : parité CLI/Python, audits/estimations/échelle/champ retiré ; preuves à produire |
+| T066 | T066 | U1/U3 : fixtures de contrats, partage, interruption et politique de génération ; preuves à produire |
+| T068 | T068 | U3 : surcharge physique par profil, validation par point avant partage ; preuves à produire |
+| T069 | T069 | U1 : versions/composition de toutes clés et classification des paramètres ; preuves à produire |
+| T071 | T071 | U1 : remplace le bundle unique par génération/audits/estimations/points ; commits séparés ; preuves à produire |
+| T072 | T072 | U1 : remplace la relance globale des échecs par reprise par couche, retry explicite et preuves immuables ; preuves à produire |
+| T073 | T073 | U1 : CLI reprise/retry et références propres aux couches ; preuves à produire |
+| T074 | T074 | U1/U3 : Python reprise/retry/échelle et résultats identiques ; preuves à produire |
+| T075 | T075 | Propagation des versions et maintien de l’inventaire sans génération ; preuves à produire |
+| T076 | T076 | U1/U3 : acceptation des six cas de partage/reprise/parité et échelles ; preuves à produire |
+| T077 | T077 | U1 : export par contexte de point, même génération, pas de bundle/verdict universel ; preuves à produire |
+| T088 | T088 | I1 : décision terminale go/no_go, raisons/preuves et non-applicabilité ; preuves à produire |
+| T089 | T089 | I1 : reste conditionnelle go ; non applicable après no_go, jamais cochée réalisée ; preuves à produire |
+| T090 | T090 | I1 : reste conditionnelle go ; non applicable après no_go, jamais cochée réalisée ; preuves à produire |
+| T091 | T091 | I1 : reste conditionnelle go ; non applicable après no_go, jamais cochée réalisée ; preuves à produire |
+| T092 | T092 | I1 : reste conditionnelle go ; non applicable après no_go, jamais cochée réalisée ; preuves à produire |
+| T093 | T093 | I1 : JG-C seulement après go ; non applicable après no_go ; preuves à produire |
+| T094 | T094 | I1 : programme détaillé seulement après go ; non applicable après no_go ; preuves à produire |
+| T095 | T095 | I1 : dépendances alternatives explicites et bilan no_go atteignable sans T089–T094 ; preuves à produire |
+
+Les 63 autres tâches sont préservées. Dans la branche no_go future, T089–T094 seront
+annotées non applicables **à cette décision**, cases ouvertes ; actuellement G-FORM est
+ouverte et elles restent bloquées. T095 : communs T083/T088 terminaux ; go ajoute résultats
+T093/T094, no_go n'attend aucune tâche conditionnelle. Les deux graphes sont acycliques.
+Une clôture study_completed_no_go est un bilan scientifique, pas une géométrie qualifiée.
+
+### Vérifications documentaires exécutées avant analyse finale
+
+- 10 schémas Draft 2020-12 valides, registre URN local sans réseau ; 29 cas synthétiques
+  de forme positifs/négatifs (exemples, versions, champ supprimé, références/couches,
+  verdicts, tolérance fixe, absence d'échelle), tous conformes aux attendus.
+- Deux paires JSON/YAML équivalentes ; jsonschema 4.10.3 et PyYAML 6.0.1 utilisés pour
+  l'audit seulement, sans ajout de dépendance produit.
+- 72/72 FR/SC rattachés aux 95 tâches ; aucune case produit cochée ; dépendances
+  acycliques en branches go/no_go, T095 atteignable dans chacune si ses préalables passent.
+- T001–T019 restent fermées sur leur propre socle, sans dépendance tardive à Python,
+  campagnes, stockage complet ou G-FORM. Liens locaux contrôlés.
+- Constitution/Q1 inchangés par rapport au début R3 ; aucun fichier src/include/tests/
+  python/evidence/CMakeLists.txt produit présent. Ces audits ne valident pas l'implémentation
+  des clés, mesures, reprise, CLI/Python, VTK/ParaView ni la formulation conique.
+
+L'invocation finale speckit-analyze utilise ensuite le mécanisme installé et rend son rapport
+**sans écriture**. tasks-analysis.md est explicitement l'historique R2 ; aucun nouveau bilan
+scientifique ni résultat logiciel n'est fabriqué pour supprimer les avertissements.
+
+### Fichiers R3
+
+35 fichiers documentaires/contractuels, dont 5 nouveaux.
+
+| Fichier (relatif à specs/001-import-maillage-monoelement/) | Action |
+| --- | --- |
+| [checklists/plan-review.md](checklists/plan-review.md) | révisé |
+| [checklists/requirements.md](checklists/requirements.md) | révisé |
+| [coherence-review.md](coherence-review.md) | révisé |
+| [conical-study.md](conical-study.md) | révisé |
+| [contracts/README.md](contracts/README.md) | révisé |
+| [contracts/bundle.md](contracts/bundle.md) | révisé |
+| [contracts/campaign-artifact.schema.json](contracts/campaign-artifact.schema.json) | nouveau |
+| [contracts/campaign-state.schema.json](contracts/campaign-state.schema.json) | révisé |
+| [contracts/campaign.example.json](contracts/campaign.example.json) | révisé |
+| [contracts/campaign.example.yaml](contracts/campaign.example.yaml) | révisé |
+| [contracts/campaign.md](contracts/campaign.md) | révisé |
+| [contracts/campaign.schema.json](contracts/campaign.schema.json) | révisé |
+| [contracts/cli-python.md](contracts/cli-python.md) | révisé |
+| [contracts/configuration.example.json](contracts/configuration.example.json) | révisé |
+| [contracts/configuration.example.yaml](contracts/configuration.example.yaml) | révisé |
+| [contracts/configuration.schema.json](contracts/configuration.schema.json) | révisé |
+| [contracts/manifest.schema.json](contracts/manifest.schema.json) | révisé |
+| [contracts/physical-scale.md](contracts/physical-scale.md) | nouveau |
+| [contracts/physical-scale.schema.json](contracts/physical-scale.schema.json) | nouveau |
+| [contracts/report.schema.json](contracts/report.schema.json) | révisé |
+| [contracts/representation.schema.json](contracts/representation.schema.json) | révisé |
+| [contracts/result-identities.md](contracts/result-identities.md) | nouveau |
+| [contracts/scale-audit-cases.example.json](contracts/scale-audit-cases.example.json) | nouveau |
+| [contracts/topology.schema.json](contracts/topology.schema.json) | révisé |
+| [data-model.md](data-model.md) | révisé |
+| [geometry-verification.md](geometry-verification.md) | révisé |
+| [mesh-quality.md](mesh-quality.md) | révisé |
+| [plan.md](plan.md) | révisé |
+| [quickstart.md](quickstart.md) | révisé |
+| [reconciliation.md](reconciliation.md) | révisé |
+| [research.md](research.md) | révisé |
+| [spec.md](spec.md) | révisé |
+| [tasks-analysis.md](tasks-analysis.md) | révisé |
+| [tasks.md](tasks.md) | révisé |
+| [verification.md](verification.md) | révisé |
+
+### Revue et premier groupe inchangés
+
+Premier groupe prêt à exécuter après revue documentaire : **T001–T019** ; aucun démarrage
+automatique. Passage : neuf V-01/02/03 × 0°/25°/50°, variantes V-03 fourni/complété,
+positivité/intégrité/raccords/Q1 applicables, mesures indépendantes et vues BA/lèvres.
+U2 ajoute les essais du moniteur à T010 dans ce socle, sans dépendance retardée.
+Sur échec conserver preuves, revoir construction et rejouer, sans généralisation ni critères
+relâchés. Revue préalable : séparation de clés/persistance et reprises, suppression du
+paramètre/migration, échelle/tolérance et branches du bilan. G-FORM et faisabilité des cartes
+planes restent des décisions/expériences prévues, jamais des capacités réalisées par R3.

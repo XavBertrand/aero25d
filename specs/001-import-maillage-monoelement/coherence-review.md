@@ -115,3 +115,21 @@ Les audits documentaires contrôlent 60 FR/12 SC, matrices 60/60, 95 tâches/ét
 isolement de J0, blocage conique, huit schémas 2020-12, exemples/legacy, deux équivalences
 JSON/YAML et 16 refus négatifs. Q1 est inchangé. Ces résultats ne constituent aucun test de
 produit ni qualification scientifique. Voir [l’analyse R2](tasks-analysis.md).
+
+## R3 — correction documentaire autorisée des cinq écarts
+
+U1 : identités/résultats immuables par génération, audit, estimation et point ; la politique
+qualité qui peut modifier les coordonnées est incluse dans la génération. I1 : T095 a une
+branche bilan no_go indépendante des tâches go, laissées non applicables sans coche ;
+G-FORM reste ouverte. U2 : paramètre inutilisé retiré avant T010, moniteur existant justifié
+sans epsilon, essais d'échelle/sensibilité/protection. U3 : source-scale-v1 dans S,
+mètres faisant autorité, adimensionnel L/c_input, tolérance1e-10/0m et conversion unique.
+I2 : histoire de constitution corrigée seulement dans le plan, principes inchangés.
+
+Le détail des correspondances et la liste des fichiers R3 sont dans
+[reconciliation.md](reconciliation.md#r3--correction-des-cinq-écarts). Contrôles documentaires
+exécutés : 10 schémas, 29 cas synthétiques de forme, deux équivalences JSON/YAML, conservation
+60 FR/12 SC/95 tâches ouvertes, couverture72/72, deux graphes acycliques et clôturables,
+liens locaux, constitution et Q1 inchangés. Aucun test du mailleur, aucune implémentation.
+La nouvelle analyse Spec Kit qui suit est en lecture seule et rendue dans la réponse ;
+le rapport R2 conservé n'est pas une acceptation des nouveaux critères R3.

@@ -59,79 +59,72 @@ Le module `src/campaign/` orchestre les API C++ de lecture/résolution, F1, gén
 contrôle et export. Il ne recopie ni spline, ni topologie, ni loi de distribution, ni métrique.
 La CLI et Python relaient cette même orchestration ; aucun exécuteur de campagne Python.
 
-La version `effective-mesh-v3` définit une sérialisation canonique : clés triées,
-UTF-8, nombres binaire64 rendus avec aller-retour exact, −0 canonisé en 0, aucun NaN.
-`mesh_key` est le SHA-256 de la source brute et des paramètres **résolus qui influencent
-la géométrie ou la génération** : unités/échelle, indications/fermeture, reconstruction,
-chaîne S/N/W/flèche, distributions, comptes F1, domaine, lissage et budgets géométriques,
-plus versions des algorithmes et empreinte du binaire/options numériques.
-Les ID, chemins d'origine, dates, incidence purement descriptive et `flow_estimate` en sont
-exclus. Toute classification de champ est testée ; un champ futur inconnu est refusé.
-Les valeurs demandées différentes donnant les mêmes valeurs effectives ont la même clé.
-La source brute différente garde une clé différente, même pour des contours visuellement égaux.
+La séparation normative des clés, états et fichiers est fixée dans
+[result-identities.md](result-identities.md) : point logique, entrées de génération,
+maillage généré immuable, audits indépendants et estimations physiques distincts.
+`effective-mesh-v3` inclut la politique qualité susceptible de modifier la génération,
+selon `generation-quality-v1`. `audit_profiles` seul désigne les audits en lecture seule.
+Il est interdit d'exclure globalement tous les profils qualité de mesh_key.
 
-`reuse_key` ajoute à `mesh_key` profil qualité et empreinte, schémas/règle de résolution,
-environnement numérique exact, limites de ressources et options d'export demandées.
-Une différence de ces éléments invalide la reprise certifiée ; il n'y a pas de compatibilité
-floue de versions. Des limites de ressources différentes peuvent empêcher une exécution,
-sans modifier le maillage physique et sans justifier une génération répétée dans une campagne.
-Le calcul et la réutilisation de l'estimation facultative y+ sont traités par point après
-maillage ; changer cette estimation ne génère pas de nouveaux nœuds.
-
-Chaque `point_id` reste une ligne de l'inventaire. Des points ayant le même `mesh_key`
-référencent un unique `mesh_case_id` et un bundle ; leur incidence et leurs diagnostics
-de contexte sont conservés séparément. Le compteur d'appels de génération doit rester égal
-au nombre de maillages effectifs réellement tentés, jamais au nombre d'incidences descriptives.
+L'échelle est résolue par point selon [physical-scale.md](physical-scale.md), dans S original,
+avant toute flèche/normalisation et avant reprise. En campagne, `profiles[].physical_chord_m`
+peut surcharger explicitement l'indication de la configuration ; null l'annule. Omission la
+conserve. Cette substitution, unités/indications/flèche et toutes les autres sont archivées.
+Changer l'incidence descriptive ou flow_estimate ne multiplie pas les générations ; changer
+un réglage de génération, y compris une limite consommée par le lissage, change mesh_key.
 
 ## Exécution, conservation et reprise
 
-`execution.mode=sequential` et `execution.on_failure=continue|stop` sont obligatoires,
-sans choix implicite. `campaign run --file study.yaml --out study --json` exécute les
-maillages uniques dans l'ordre de leur première occurrence. Une seule génération est active.
-Chaque cas publie son propre bundle par la procédure atomique unitaire. Après chaque point
-terminé, l'état et le CSV sont écrits dans des fichiers temporaires voisins puis renommés ;
-ils référencent uniquement des cas déjà publiés. L'état JSON fait autorité si une interruption
-laisse le CSV à la révision précédente ; celui-ci est régénéré depuis l'état à la reprise.
-Un journal `events.jsonl` conserve les transitions et les tentatives ; une ligne terminale
-tronquée n'est pas un cas terminé. Aucun résultat antérieur n'est détruit par une reprise.
+`execution.mode=sequential` et `execution.on_failure=continue|stop` sont obligatoires.
+`campaign run --file study.yaml --out study --json` orchestre une seule génération active,
+puis les audits requis et l'estimation de chaque point, dans l'ordre de première occurrence.
+Un seul artefact de génération par mesh_key est tenté dans un run, avec résultats d'audits
+et d'estimations référencés séparément ; aucun bundle partagé ne porte un verdict universel.
+Les commits atomiques par couche, le verrou d'écrivain, les références et les règles de
+reprise sont ceux de result-identities.md. Après chaque point terminal, publier état/CSV
+et events.jsonl ; après crash l'état JSON fait autorité et le CSV est reconstruit.
 
-`--resume` exige un dossier existant de même campagne ; il ne se combine pas avec `--replace`.
-Il vérifie les entrées actuelles, `reuse_key`, versions, état terminal `completed`, verdict
-valide, digests, tailles, références et intégrité du bundle avant `reused`. Les points ayant
-un maillage terminé partagé peuvent recevoir `reused` sans nouvelle génération. Les cas
-`failed`, `running`, interrompus, incomplets ou corrompus sont retentés dans un nouveau
-dossier d'essai ; les preuves anciennes restent archivées et la cause de non-reprise est écrite.
-Un résultat compatible d'une autre campagne n'est pas recherché automatiquement.
-Un seul écrivain est admis par dossier (verrou exclusif ; verrou persistant après crash
-diagnostiqué, suppression seulement après constat de l'absence du processus propriétaire).
+`--resume` exige même racine/campagne et ne se combine pas avec --replace.
+Il réutilise seulement les couches terminées, compatibles et intègres après revalidation
+de chaque point. Un point est `reused` seulement si ses propres audits requis passent ;
+un audit échoué mémorisé est relu comme échec. `--resume --retry-failed` demande explicitement
+de nouvelles tentatives des couches échouées, sans écraser les anciennes. Les couches
+incomplètes/corrompues sont retentées dans un nouveau dossier avec motif, jamais promues.
+Changer d'audit ou d'estimation réutilise les nœuds compatibles mais recalcule la couche
+concernée ; changer la politique de génération peut exiger un autre maillage.
 
-`continue` conserve l'échec et tente les points suivants. `stop` s'arrête après publication
-de l'échec, inscrit tous les suivants `not_run`, puis retourne un code non nul.
-Les doublons d'un cas échoué ne déclenchent pas une boucle de tentatives dans le même run :
-ils portent le même échec ; seule une reprise explicite permet un nouvel essai.
-Le statut global est `success` seulement si tous les points sont `completed|reused` valides,
-ou tous `ready` pour `check`. Sinon `partial_failure`, `stopped` ou `invalid_request`.
-Codes : 0 succès ; 2 demande de campagne invalide ; 6 cas en échec, arrêt ou inventaire non
-prêt ; 7 erreur d'E/S/intégrité globale ; 8 limite de ressources globale ; 70 erreur interne.
-Les codes unitaires précis restent dans les lignes, sans être masqués par le code global.
+`continue` tente le point suivant après conservation de l'échec ; `stop` marque les suivants
+not_run. Un audit failed/uncertified échoue son point code 6 sans changer le maillage ni
+un audit voisin. Une estimation indisponible faute d'échelle reste explicite et n'invente
+aucune valeur ; elle n'invalide pas le parcours géométrique. Un échec de calcul de l'estimation
+échoue le point. Le statut global success exige tous points completed/reused avec leurs
+contrôles requis, ou tous ready en check. Sinon partial_failure/stopped/invalid_request.
+Codes : 0 succès ; 2 demande globale invalide ; 6 point en échec/non prêt ou arrêt ;
+7 E/S/intégrité globale ; 8 ressources globales ; 70 interne. Codes unitaires conservés.
 
 ## Artefacts et accès Python
 
-`campaign-resolved.json` archive la demande normalisée, les empreintes de toutes les entrées,
-les points dans l'ordre, paramètres effectifs et clés, versions et substitutions. C'est une
-photographie immuable par tentative ; une reprise crée une nouvelle photographie liée à la
-précédente. `campaign-state.json` porte le statut courant et l'historique des tentatives.
-Le tableau `summary.csv` a une ligne par point : `point_id,mesh_case_id,profile_id,sweep_deg,
-configuration_id,level,incidence_deg,mesh_key,reuse_key,status,exit_code,bundle,diagnostic_count`.
-Le JSON conserve en plus les diagnostics structurés et les causes de non-reprise.
-Les deux documents utilisent l'enveloppe `campaign-state.schema.json` ; leurs champs `artifact`
-et `phase` distinguent photographie résolue et état d'exécution.
+`campaign-resolved.json` archive la demande, les sources, paramètres/règles résolus et clés
+calculables à l'inventaire (mesh_digest, clés d'audit/estimation/résultat null avant génération).
+Photographie immuable par tentative ; `campaign-state.json` garde l'état et l'historique.
+Les deux utilisent campaign-state.schema.json, avec artifact/phase distincts et key_versions.
+Les lignes portent mesh_artifact, audits[], estimate, point_result, physical_scale,
+failed_stage et les identités conservées. Le bundle unitaire est facultatif et propre au point.
+Les descripteurs et références typés suivent campaign-artifact.schema.json ; aucune référence
+relative à un autre audit ne permet de remplacer son verdict.
+
+Le CSV a une ligne par point, colonnes : `point_id,mesh_case_id,profile_id,sweep_deg,
+configuration_id,level,incidence_deg,mesh_key,mesh_digest,reuse_key,status,exit_code,
+mesh_artifact,audit_results,estimate_status,estimate_artifact,point_result,bundle,
+failed_stage,diagnostic_count`. `audit_results` est une cellule JSON échappée CSV contenant
+les audit_id/status/path ; les clés, digests et tentatives complets sont dans l'état JSON.
+Les chemins de ces références ont path_base=campaign_root ; aucun cwd implicite.
 
 `Client.campaign_check(file=..., out=...)` et
-`Client.campaign_run(file=..., out=..., resume=False)` retournent un `CampaignResult`
-(état, inventaire, CSV, chemins des cas), et la même erreur structurée si code non nul.
-Un dictionnaire peut remplacer le fichier avec `base_dir` obligatoire ; il est sérialisé
-en JSON sans modifier la base des chemins. Les méthodes ne réévaluent ni clés ni verdicts.
+`Client.campaign_run(file=..., out=..., resume=False, retry_failed=False)` exposent
+CampaignResult avec inventaire et références de chaque couche. retry_failed exige resume.
+Un dictionnaire impose base_dir ; mêmes clés/statuts/diagnostics, sans boucle ni calcul Python.
+L'erreur globale structurée conserve les résultats partiels et les échecs locaux.
 
 ## Extension future réservée
 
@@ -149,8 +142,9 @@ originaux sont conservés dans les entrées archivées si lisibles ; l’envelop
 demande invalide satisfasse le schéma de demande. `future_flight_status` vaut `not_provided`
 ou `not_executed` selon la présence de l’extension ; il ne signifie jamais calcul effectué.
 `valid=true` sur `phase=inventory` signifie contrôle terminé sans erreur, sans maillage valide.
-Les exports v1 de run sont fixes (bundle canonique, cinq SVG et ensemble VTP/VTM/VTS) ; leur
-version entre dans reuse_key, sans option d’export cachée dans la demande de campagne.
+Les exports de run restent fixes (cinq SVG, ensemble VTP/VTM/VTS et données canoniques
+partagées avec résultats de point) ; le bundle autonome peut être matérialisé sans
+régénérer. Leur version entre dans reuse_key, sans option d’export cachée.
 
 Le produit de 18 points V-10 emploie **V-01 et V-02**, trois flèches et niveaux 0/1/2,
 avec une configuration fine commune. Les essais incluant **V-03** emploient des points explicites
@@ -173,7 +167,7 @@ et leurs versions effectives, métriques planes et versions de résolution, avec
 les paramètres et versions déjà prévus. Deux demandes planar_2d et planar_25d à flèche nulle
 peuvent partager la géométrie seulement si leurs données effectives sont identiques ; le mode
 demandé reste en provenance. L’incidence sans effet géométrique ne multiplie pas les maillages.
-Les résultats v1 ne sont pas repris comme v2 sans contrôle explicite de compatibilité.
+Les clés legacy effective-mesh-v1/v2 ne sont pas reprises comme effective-mesh-v3 sans recalcul et contrôles explicites de compatibilité.
 
 Le futur DOE de résolution utilisera des **tuples de vol associés Mach/Re_c/T**, incidences,
 flèches, paramètres indépendants d’effilement et réglages numériques. Il ne formera pas trois

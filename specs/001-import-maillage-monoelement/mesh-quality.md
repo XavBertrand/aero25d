@@ -195,3 +195,14 @@ modèle conique ni une équation RANS. T089 devra dériver et figer contrôles d
 orientations, mesures et erreurs après G-FORM, avant JG-C ; des tableaux de métriques détaillés
 ne sont pas introduits dans le noyau plan par anticipation. Les associations cellule/face
 restent explicites dans le canonique et les exports.
+
+## R3 — qualité de génération, audits et échelle physique
+
+Les bornes dures utilisées à l'étape 7 influencent potentiellement les coordonnées et
+appartiennent donc à mesh_key via generation-quality-v1 ; elles ne sont pas un simple
+audit. La liste audit_profiles est seulement postérieure/en lecture seule. Leurs verdicts
+indépendants persistent selon [result-identities.md](contracts/result-identities.md).
+Les paramètres inutilisés de régularisation sont retirés avant T010, moniteur exact sans
+epsilon dans geometry-verification.md §5/R3. Les distances géométriques N/W sont distinctes
+de leur conversion physique par [source-scale-v1](contracts/physical-scale.md) ; y+ reste
+une estimation indépendante, indisponible sans échelle, jamais une donnée RANS.

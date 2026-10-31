@@ -1,5 +1,5 @@
 # Exemple de demande uniquement ; aucun résultat produit.
-schema_version: '1.1'
+schema_version: '1.2'
 input: ../../../../tests/data/V01/profile.dat
 units: dimensionless
 sweep_deg: 25
@@ -30,3 +30,4 @@ resources:
   max_cells: 10000000
   max_memory_bytes: 4294967296
 geometry_mode: planar_25d
+audit_profiles: [Q1]

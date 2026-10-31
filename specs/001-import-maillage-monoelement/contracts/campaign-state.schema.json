@@ -89,7 +89,8 @@
     "key_version": {
       "enum": [
         "effective-mesh-v1",
-        "effective-mesh-v2"
+        "effective-mesh-v2",
+        "effective-mesh-v3"
       ]
     },
     "request": {
@@ -268,7 +269,8 @@
             "type": [
               "string",
               "null"
-            ]
+            ],
+            "description": "Matérialisation unitaire facultative propre au point, chemin relatif ; pas le pointeur de la génération partagée."
           },
           "diagnostic_count": {
             "type": "integer",
@@ -285,8 +287,127 @@
               "string",
               "null"
             ]
+          },
+          "mesh_digest": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mesh_artifact": {
+            "anyOf": [
+              {
+                "$ref": "urn:aero25d:mesh:campaign-artifact:1#/$defs/mesh_ref"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "audits": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:aero25d:mesh:campaign-artifact:1#/$defs/audit_entry"
+            }
+          },
+          "estimate": {
+            "$ref": "urn:aero25d:mesh:campaign-artifact:1#/$defs/estimate_entry"
+          },
+          "point_result": {
+            "anyOf": [
+              {
+                "$ref": "urn:aero25d:mesh:campaign-artifact:1#/$defs/point_ref"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "physical_scale": {
+            "anyOf": [
+              {
+                "$ref": "urn:aero25d:mesh:physical-scale:1"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "failed_stage": {
+            "enum": [
+              null,
+              "preflight",
+              "generation",
+              "audit",
+              "estimate",
+              "persistence"
+            ]
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "enum": [
+                    "completed",
+                    "reused"
+                  ]
+                }
+              },
+              "required": [
+                "mesh_artifact"
+              ]
+            },
+            "then": {
+              "properties": {
+                "exit_code": {
+                  "const": 0
+                },
+                "mesh_artifact": {
+                  "$ref": "urn:aero25d:mesh:campaign-artifact:1#/$defs/mesh_ref"
+                },
+                "mesh_digest": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "point_result": {
+                  "$ref": "urn:aero25d:mesh:campaign-artifact:1#/$defs/point_ref"
+                },
+                "audits": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "properties": {
+                      "status": {
+                        "const": "passed"
+                      }
+                    }
+                  }
+                },
+                "estimate": {
+                  "properties": {
+                    "status": {
+                      "enum": [
+                        "estimate",
+                        "unavailable",
+                        "not_requested"
+                      ]
+                    }
+                  }
+                },
+                "failed_stage": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
       }
     },
     "generation_attempts": {
@@ -312,6 +433,46 @@
         "not_provided",
         "not_executed"
       ]
+    },
+    "key_versions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "canonicalization",
+        "generation",
+        "mesh_content",
+        "generation_quality",
+        "audit",
+        "estimate",
+        "point_result",
+        "physical_scale"
+      ],
+      "properties": {
+        "canonicalization": {
+          "const": "canonical-json-f64-v1"
+        },
+        "generation": {
+          "const": "effective-mesh-v3"
+        },
+        "mesh_content": {
+          "const": "generated-mesh-v1"
+        },
+        "generation_quality": {
+          "const": "generation-quality-v1"
+        },
+        "audit": {
+          "const": "mesh-audit-v1"
+        },
+        "estimate": {
+          "const": "physical-yplus-v1"
+        },
+        "point_result": {
+          "const": "point-result-v1"
+        },
+        "physical_scale": {
+          "const": "source-scale-v1"
+        }
+      }
     }
   },
   "allOf": [
@@ -341,10 +502,7 @@
       "if": {
         "properties": {
           "schema_version": {
-            "enum": [
-              "1.1",
-              "1.2"
-            ]
+            "const": "1.1"
           }
         }
       },
@@ -368,6 +526,38 @@
         "properties": {
           "key_version": {
             "const": "effective-mesh-v1"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schema_version": {
+            "const": "1.2"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "key_versions"
+        ],
+        "properties": {
+          "key_version": {
+            "const": "effective-mesh-v3"
+          },
+          "points": {
+            "items": {
+              "required": [
+                "mesh_digest",
+                "mesh_artifact",
+                "audits",
+                "estimate",
+                "point_result",
+                "physical_scale",
+                "failed_stage"
+              ]
+            }
           }
         }
       }

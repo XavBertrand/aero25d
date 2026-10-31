@@ -123,3 +123,27 @@ il ne déduit jamais un mode conique d’une troisième coordonnée ou d’un no
 métrique conique détaillé reste bloqué par G-FORM et sera versionné après T088/T089, sans
 modifier par anticipation le layout du chemin plan. VTK/PyVista et ParaView restent obligatoires
 pour qualifier les exports, uniquement en environnement de tests.
+
+## R3 — fichiers partagés et verdicts propres aux opérations
+
+Le bundle unitaire autonome conserve son contrat manifest.valid=report.valid. Plusieurs
+points peuvent partager **les octets générés** via mesh_artifact, sans partager un verdict
+qualité unique ; voir [result-identities.md](result-identities.md). Les données canoniques
+nœuds/topologie/source et génération sont immuables. Audits et estimations possèdent chacun
+une clé/version, des paramètres et des fichiers immuables ; cells/wall_faces de qualité ne
+sont pas écrasés par les estimations physiques. `result_records` inventorie leurs copies
+locales avec clé, version, chemin, taille et digest dans chaque manifeste/rapport 1.2.
+Une matérialisation autonome inclut ses copies locales et n'exige aucun chemin externe.
+Les exports portent le contexte d'audit/point et le statut de cette opération, pas un valid
+universel sur le maillage. Des audits contradictoires peuvent donc coexister sans mutation.
+Dans le rapport agrégé d'un point à plusieurs audits, quality_profile/profile_sha256 sont
+null ; result_records référence chacun des rapports d'audit, qui nomme son profil exact.
+Avec un seul audit ces champs peuvent désigner ce profil. La politique de génération reste
+dans generation-resolved.json, indépendamment du profil nommé dans un rapport d'audit.
+
+`physical_scale` dans manifeste et rapport (null seulement avant résolution impossible)
+archive la politique source-scale-v1 et ses mesures ; resolved.json porte le même objet.
+[physical-scale.md](physical-scale.md) fixe mètres/adimensionnel, tolérance dimensionnée
+et conversion unique W→N→m. `quality/report.json.y_plus` ne contient aucune min/max/valeur
+si le statut est unavailable/not_requested/failed. Les instantanés d'estimation conservent
+ν, u_tau, distance/version, échelle et hypothèses ; ils ne sont pas des champs de solution.

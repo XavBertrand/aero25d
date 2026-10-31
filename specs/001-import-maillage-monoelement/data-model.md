@@ -94,16 +94,22 @@ Les sorties sont préparées dans un répertoire temporaire voisin. Le manifeste
 | --- | --- | --- |
 | `CampaignRequest` | Document original JSON/YAML, base des chemins, profils, configurations, développement et politique | Une seule syntaxe normalisée et aucune génération au contrôle |
 | `CampaignPoint` | ID logique, profil/flèche/configuration/niveau/incidence, paramètres demandés/résolus et diagnostics | Une ligne par demande même si plusieurs lignes partagent un maillage |
-| `EffectiveMeshCase` | mesh_case_id, mesh_key, reuse_key, bundle et versions des règles | Une génération par identité effective tentée dans une exécution ; incidence descriptive exclue |
+| `EffectiveMeshCase` | mesh_case_id, mesh_key, mesh_digest, mesh_artifact et versions de génération | Géométrie immuable partagée seulement à entrées de génération compatibles, politique qualité de génération incluse |
+| `QualityAudit` | audit_key, mesh_digest, profil/budgets/méthodes, verdict, preuves et tentative | Lecture seule ; passed/failed/uncertified persistés sans écraser un autre audit |
+| `PhysicalEstimate` | estimate_key, distances, physical_scale, ν/u_tau/formule, valeurs ou indisponibilité | Plusieurs estimations par maillage, sans modifier les données générées ou les audits |
+| `PointResult` | reuse_key, contexte validé, références mesh/audits/estimate et verdict | Réussite seulement avec les paramètres de ce point ; bundle autonome facultatif |
+| `PhysicalScale` | c_input et bornes dans S, k, c_phys, indication et politique source-scale-v1 | Mètres font autorité ; adimensionnel L/c_input ; résolution avant flèche/normalisation |
 | `CampaignSnapshot` | Demande normalisée, substitutions, sources/digests, points et compatibilité | Photographie résolue immuable par tentative ; références relatives |
-| `CampaignState` | ready/pending/running/completed/reused/failed/not_run, compteurs et tentatives | Publication progressive ; completed exige un bundle valide et intègre ; un échec n’est pas repris comme succès |
+| `CampaignState` | ready/pending/running/completed/reused/failed/not_run, compteurs et tentatives | Publication progressive ; completed exige génération intègre et tous audits propres au point passés ; un échec n’est pas repris comme succès |
 | `ExportObject` | export_object_id, représentation, rôle, repère, unités, provenance et IDs canonique/source | Tous les objets exportés sont adressables ; pas de faux global_node_id sur un point source |
 
 `CampaignSnapshot` et `CampaignState` utilisent campaign-state.schema.json avec les champs
 `artifact`/`phase`. La campagne conserve `requested-campaign.{json|yaml}`, des instantanés
 `attempts/<id>/campaign-resolved.json`, l’état courant, events.jsonl, summary.csv et
-`cases/<mesh_case_id>/attempts/<id>/`. Les entrées archivées sont dans `inputs/` ; les chemins
-internes sont relatifs au dossier qui les contient. L’état fait autorité sur le CSV après crash.
+`meshes/`, `audits/`, `estimates/` et `points/`, chacun par clé/ID et tentative
+selon [result-identities.md](contracts/result-identities.md). Les entrées sont dans `inputs/` ;
+les références inter-artefacts déclarent path_base=campaign_root, les liens internes VTK
+restent relatifs au fichier propriétaire. L’état fait autorité sur le CSV après crash.
 Les états `ready` et `reused` sont distincts de la validité d’une géométrie ; la phase/opération
 et le verdict du bundle restent nécessaires. Un champ futur de vol est archivé not_executed.
 
@@ -134,3 +140,15 @@ champ. Aucune entité de solution/champ p n’est produite par 001.
 La lecture legacy 1.0 est interprétée par la règle `legacy-planar-extrusion-1-to-1.2` et
 archivée comme provenance, avec mode `planar_25d` (y compris Λ=0, limite admise). Les nouvelles
 sorties sont 1.2 ; aucun champ métrique futur n’est deviné depuis des coordonnées ou un nom.
+
+## R3 — échelle et identité de résultat
+
+[physical-scale.md](contracts/physical-scale.md) fixe la mesure de c_input dans S original
+et la conversion unique des distances N→m. `ReferenceGeometry` ne prend ni corde comprimée
+ni corde normalisée comme référence physique. Les mesures géométriques restent en unités
+source/repère déclaré. Le profil quality_profile peut influencer la génération (lissage,
+arrêt, sélection) : sa projection effective appartient à mesh_key. Seule audit_profiles est
+postérieure et indépendante. Les schémas campaign-artifact/physical-scale complètent les
+transports ; la machine received→committed_valid ci-dessus décrit le bundle **unitaire**.
+Dans une campagne, generated ne préjuge pas des audits de tous les points ; les machines
+par couche et la reprise sont celles de result-identities.md, sans promotion d'un échec.

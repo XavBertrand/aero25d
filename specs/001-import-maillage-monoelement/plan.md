@@ -29,7 +29,7 @@ globale et les limites Q1 ne sont **pas encore vérifiées expérimentalement**.
 
 **Language/Version**: C++20, GCC≥12 de référence, Clang≥16 pour seconde compilation ; Python≥3.11.
 
-**Primary Dependencies**: nlohmann/json 3.12.0 (MIT), OpenSSL≥3 libcrypto (Apache-2.0), sous-ensemble des prédicats de Shewchuk (domaine public), yaml-cpp 0.8.0 (MIT) pour le lecteur de documents JSON/YAML partagé, après J0 dès T025. Développement : CMake≥3.25/CTest (BSD-3-Clause), Ninja≥1.21 (Apache-2.0), Catch2 3.8.1 (BSL-1.0). Détails, raisons et notices dans [research.md](research.md).
+**Primary Dependencies**: nlohmann/json 3.12.0 (MIT), OpenSSL≥3 libcrypto (Apache-2.0), sous-ensemble des prédicats de Shewchuk (domaine public), yaml-cpp 0.8.0 (MIT) pour le lecteur de documents JSON/YAML partagé, après J0 dès T025. Développement : CMake≥3.25/CTest (BSD-3-Clause), Ninja≥1.11 (Apache-2.0), Catch2 3.8.1 (BSL-1.0). Détails, raisons et notices dans [research.md](research.md).
 
 **Storage**: Dossiers autonomes versionnés : source brute, configurations JSON/YAML normalisées selon le même schéma, tableaux binaires little-endian f64/u64, VTP/VTM/VTS ASCII, états de campagne JSON/CSV/journal et SVG. Aucune base de données ou service.
 
@@ -284,8 +284,9 @@ sont ajoutées avant réalisation ; lecture 1.0 par migration explicite, aucun c
 conditionnelle T095. Ordre : corpus → similitude/géométrie → fermeture visqueuse/SA-neg →
 restitution/efforts/validation → **go G-FORM** → contrat géométrique/métrique → oracles →
 construction expérimentale → JG-C. Le contrat métrique n’est pas détaillé aujourd’hui.
-Un no-go conserve preuves/questions et laisse le lot B incomplet ; il n’annule pas une
-acceptation plane réellement obtenue. Le graphe de tâches rend toutes ces dépendances explicites.
+Un no-go conserve preuves/questions, permet le bilan scientifique T095 et laisse la
+construction conique non exécutée/non applicable ; il n’annule pas une acceptation plane
+réellement obtenue. Le graphe de tâches rend toutes ces dépendances explicites.
 
 Les travaux futurs d’équations (uniforme cartésien, conservation/identités métriques, limite
 2.5D, diffusion/turbulence, références indépendantes) appartiennent à FUT-01–07 de la roadmap.
@@ -300,3 +301,23 @@ les mêmes règles de scalaires/erreurs et leurs schémas respectifs. T067 réut
 Le cœur géométrique et J0 n’exigent pas ce parseur ; aucune duplication Python/campagne.
 Le mode plan garde `[N,2]` FP64 et métriques euclidiennes simples ; les couches source,
 logique, physique, transformations et métriques sont identifiées sans infrastructure RANS générale.
+
+## Révision R3 — décisions des cinq écarts
+
+Les contrats initiaux non publiés passent à 1.2 ; migrations 1.0/1.1 archivées, aucune
+reprise certifiée sur simple changement d'étiquette. Q1 et constitution 1.1.0 restent inchangés.
+U1 : [identités](contracts/result-identities.md), séparation génération/audits/estimations/
+points ; quality_profile influence mesh_key si consommé par la génération, audit_profiles
+est uniquement en lecture seule. Le cœur C++ garde tous les calculs, Python transmet.
+U2 : paramètre curvature_regularization_over_c retiré (refus explicite), moniteur sans
+régularisation défini dans geometry-verification.md §5/R3 **avant T010**, sans nouvelle
+étude scientifique et sans dépendance tardive de J0. U3 : [échelle](contracts/physical-scale.md),
+résolution S avant flèche/normalisation par T025, consommation unique T037 et tests de parité.
+
+I1 : T095 a pour préalables communs le résultat documenté T083 et une décision **terminale**
+T088. Après go : examiner T089–T094 applicables et leurs résultats, JG-C requis pour
+qualifier la géométrie. Après no-go : bilan scientifique sans dépendre de T089–T094,
+marquées non applicables à cette décision, sans cases cochées. Si T088 reste ouverte,
+T095 reste bloquée ; un résultat go ne peut être supposé. Un bilan peut être complet avec
+lot conique non réalisé, explicitement sans acceptation géométrique. I2 : premier
+établissement 1.0.0, amendement 1.1.0 ; principes constitutionnels inchangés.

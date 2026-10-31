@@ -154,3 +154,14 @@ la limite 2.5D, des solutions manufacturées avec diffusion et transport turbule
 références indépendantes. Comparer séparément erreurs d’itération/maillage/domaine et erreur
 de modèle conique ; comparer Cp/Cf et efforts avant toute revendication sur Cx≈10⁻⁴.
 Ces essais d’équations ne sont pas exécutés ni implémentés dans 001.
+
+## R3 — issue de la revue et bilan conditionnel
+
+La décision G-FORM reste **OUVERTE**. T088 peut produire go ou no_go motivé ; une revue
+non terminée ne produit aucun verdict. Après go, T089–T094 sont applicables, JG-C qualifie
+seulement la géométrie si ses preuves passent. Après no_go, ces tâches sont non applicables
+à cette décision (cases ouvertes, raisons conservées), et T095 peut clore le bilan
+scientifique avec T083/T088, sans attendre leur exécution. Conserver résultats T084–T088,
+limites de validité, obstacles et travaux non exécutés ; ce bilan n'est pas un JG-C réussi.
+Une nouvelle étude/décision versionnée peut rouvrir ultérieurement la branche, sans effacer
+le no-go précédent. Aucun contrat métrique détaillé ni capacité RANS n'est créé ici.

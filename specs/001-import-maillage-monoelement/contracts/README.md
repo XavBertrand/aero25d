@@ -13,13 +13,13 @@ Ces contrats décrivent le comportement à construire. Ils ne sont pas une bibli
 
 ## Configuration et résolution
 
-`input` est un chemin de fichier relatif au fichier de configuration, jamais au répertoire courant implicite. `units` est `m` ou `dimensionless` ; `physical_chord_m` est facultatif et ne modifie pas les coordonnées, mais relie c originale à une longueur physique pour une estimation de y+. Toutes les longueurs de configuration `*_over_c` sont rapportées à la corde originale c. Le champ `normalization` décrit la transformation globale N→W ; `translation` et `scale` sont dans les unités du fichier source, avec valeurs explicites si `mode=explicit`. `mode=chord` utilise s=c et une translation globale documentée dans la configuration résolue ; aucune normalisation par élément.
+`input` est un chemin de fichier relatif au fichier de configuration, jamais au répertoire courant implicite. `units` est `m` ou `dimensionless` ; [physical-scale.md](physical-scale.md) fixe l’échelle originale : mètres ⇒ k=1 et indication facultative contrôlée à 1e-10 relatif ; adimensionnel ⇒ k=physical_chord_m/c_input si fourni. Aucune mise à l’échelle des nœuds. Sans échelle, la géométrie reste autorisée et y+ indisponible. Toutes les longueurs de configuration `*_over_c` sont rapportées à la corde originale c. Le champ `normalization` décrit la transformation globale N→W ; `translation` et `scale` sont dans les unités du fichier source, avec valeurs explicites si `mode=explicit`. `mode=chord` utilise s=c et une translation globale documentée dans la configuration résolue ; aucune normalisation par élément.
 
 `mesh.topology=auto` ne choisit entre fin et épais que sur une identification géométrique non ambiguë ; une très petite épaisseur ne devient pas une pointe par seuil implicite. `base_intervals` est requis pour le culot épais et doit être `null` pour le cas fin. `surface_intervals` est le nombre total d'intervalles hors culot ; sa répartition entre blocs suit les distributions et contraintes de [topology.md](../topology.md). Les comptes de raccords sont dérivés par un solveur de contraintes entières déterministe ; un compte utilisateur incompatible est refusé, pas corrigé.
 
 `normal_layers`, `first_height_over_c` et `normal_growth` imposent la couche proche paroi. `outer_layers` contrôle le raccordement extérieur ; il n'est pas confondu avec le nombre de couches proches. Si l'épaisseur totale et le domaine sont incompatibles, un diagnostic indique les valeurs demandées et la borne géométrique rencontrée. `leading_edge_concentration` et `trailing_edge_concentration` sont des facteurs sans dimension ≥1 du moniteur tangentiel documenté dans [geometry-verification.md](../geometry-verification.md) ; ils ne sont pas des angles.
 
-Le profil qualité est un nom/version figé ou un document explicite complet, dont le digest et toutes les limites résolues sont archivés. `quality_profile` ne permet pas de supprimer les contrôles inconditionnels de topologie, positivité ou intégrité. L'absence de données d'écoulement (`flow_estimate=null`) autorise tous les parcours géométriques ; le rapport indique `y_plus.status=not_requested`.
+Le profil qualité est un nom/version figé ou un document explicite complet, dont le digest et toutes les limites résolues sont archivés. `quality_profile` fixe la politique utilisée pendant la génération et l’audit par défaut ; `audit_profiles` peut demander plusieurs audits en lecture seule. [result-identities.md](result-identities.md) définit leurs clés et résultats indépendants ; la politique influençant le lissage appartient à mesh_key. `quality_profile` ne permet pas de supprimer les contrôles inconditionnels de topologie, positivité ou intégrité. L'absence de données d'écoulement (`flow_estimate=null`) autorise tous les parcours géométriques ; le rapport indique `y_plus.status=not_requested`.
 
 Les champs obligatoires résolus, même lorsqu'un champ a un défaut documenté dans le schéma, sont tous écrits dans `resolved.json`. `requested.json` conserve les omissions utilisateur. Les champs dérivés contiennent leur provenance : par exemple `derived_from: family.rule.v1`, `profile: Q1`. Une incompatibilité est refusée avant génération si détectable à ce stade. La résolution ne peut pas changer un paramètre demandé pour satisfaire les tolérances.
 
@@ -89,3 +89,21 @@ prévue n’est pas un cas de vol résolu et conserve ses statuts d’estimation
 plane explicite. Manifeste/topologie/rapport 1.2 exposent représentation, espace logique et
 associations des tableaux ; aucun contrat métrique conique détaillé n’est publié. Les bornes
 et invariants sémantiques restent contrôlés par C++, au-delà de la seule forme JSON Schema.
+
+## R3 — corrections U1/I1/U2/U3/I2 avant première publication
+
+Le jeu initial **non publié** est révisé en 1.2 (1.0/1.1 conservés en lecture avec migration
+archivée, sans reprise aveugle). Les références URN majeures restent 1 ; chaque schéma
+énumère ses versions. Q1 reste inchangé en 1.0. La migration de demande 1.1 vers 1.2 archive
+`request-1.1-to-1.2-r3`, résout audit_profiles=[quality_profile] si omis et source-scale-v1.
+Le champ inutilisé curvature_regularization_over_c est retiré avant publication : refus
+REMOVED_PARAMETER/code 2 dans toutes les versions, sans l'ignorer dans une migration.
+Les migrations ne réécrivent pas les octets ni les verdicts antérieurs.
+
+Nouvelles annexes normatives, sans seconde spécification :
+[result-identities.md](result-identities.md), [physical-scale.md](physical-scale.md),
+[campaign-artifact.schema.json](campaign-artifact.schema.json),
+[physical-scale.schema.json](physical-scale.schema.json).
+[scale-audit-cases.example.json](scale-audit-cases.example.json) décrit des essais prévus,
+pas une demande unitaire ni des résultats mesurés. Les contraintes d'égalité de clés,
+d'unités, digests, verdicts et références restent des validations sémantiques à implémenter.

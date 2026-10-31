@@ -32,5 +32,8 @@
     "max_cells": 10000000,
     "max_memory_bytes": 4294967296
   },
-  "geometry_mode": "planar_25d"
+  "geometry_mode": "planar_25d",
+  "audit_profiles": [
+    "Q1"
+  ]
 }

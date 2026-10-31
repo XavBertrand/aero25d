@@ -126,7 +126,7 @@ Les correctifs de sécurité des bibliothèques système restent autorisés et s
 | OpenSSL libcrypto | ≥3.0, version exacte archivée ; Apache-2.0 | SHA-256 des sources/tableaux pour intégrité et reproduction ; seule la cible Crypto est liée, aucun TLS/réseau. Évite une implémentation cryptographique propre. |
 | Prédicats de Shewchuk | predicates.c publication 1996, copie exacte et empreinte à archiver ; domaine public indiqué par l'auteur | Sous-ensemble orient2d/expansions, adaptation namespace/compilation revue ; aucun mailleur externe. |
 | CMake/CTest | ≥3.25 ; BSD-3-Clause | Construction, installation et orchestration des tests ; uniquement développement. |
-| Ninja | ≥1.21 ; Apache-2.0 | Générateur de construction choisi pour CLion/CI ; développement seulement. |
+| Ninja | ≥1.11 ; Apache-2.0 | Générateur de construction choisi pour CLion/CI ; développement seulement. |
 | GCC et libstdc++ / Clang alternatif | GCC≥12 ; GPL-3.0 avec GCC Runtime Library Exception ; Clang≥16 Apache-2.0 avec LLVM exception | Compilateur standard ; conserver les notices runtime applicables à la distribution, pas de code de compilateur embarqué dans le noyau. |
 | Python standard | ≥3.11 ; licence PSF et notices associées | Enveloppe et tests de contrat via unittest ; aucun paquet de calcul requis. |
 | Catch2 | 3.8.1 ; BSL-1.0 | Assertions, cas paramétrés et diagnostics C++ ; seulement avec BUILD_TESTING=ON. |
@@ -178,3 +178,15 @@ La décision T088 doit permettre ou refuser explicitement la suite T089–T093. 
 sectionnelles et la restitution line of flight sont dans la roadmap, avec intégrales à dériver.
 Les approches d’équivalence restent références de comparaison, Euler une vérification
 inviscide séparée ; aucune ne remplace le RANS compressible pleinement turbulent SA-neg exigé.
+
+## R3 — décisions contractuelles ciblées (aucune extension scientifique)
+
+U2 : retirer curvature_regularization_over_c non consommé par le moniteur retenu ; la loi
+sqrt(c|κ|), sa raison géométrique (écart corde–arc) et ses limites sont explicitées dans
+geometry-verification.md §5/R3. Les arcs réguliers ont κ finie ; les angles sont séparés,
+κ=0 vaut zéro, l'erreur de quadrature est contrôlée sans régulariser la forme.
+U3 : source-scale-v1 mesure c_input dans S, mètres faisant autorité ou conversion L/c_input.
+Tolérance fixe 1e-10 relative et 0 m absolue, archivée avec bornes ; aucun facteur de flèche
+n'est une échelle physique. U1 : la politique qualité consommée par la génération appartient
+à mesh_key ; audits et estimations ont leurs propres clés/résultats immuables. Ces décisions
+sont mathématiques/contractuelles locales ; elles ne tranchent aucun point de G-FORM.

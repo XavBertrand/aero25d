@@ -55,6 +55,14 @@
           },
           "hints": {
             "$ref": "urn:aero25d:mesh:configuration:1#/properties/hints"
+          },
+          "physical_chord_m": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "exclusiveMinimum": 0,
+            "description": "Indication propre au profil, source-scale-v1 ; null annule celle de configuration, omission la conserve."
           }
         }
       },

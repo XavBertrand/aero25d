@@ -93,8 +93,8 @@ déjà qualifié. Chaque tâche conserve les échecs et les paramètres utilisé
 
 - [ ] T010 IMP — Résoudre les distributions et bandes minimales de démonstration, avec paramètres demandés et effectifs archivés. Fichiers : `src/meshing/distributions.cpp`; `src/meshing/wall_bands.cpp`; `tests/data/configs/J0/`; `tests/unit/test_distributions.cpp`.
   - Dépendances : T008, T009. Exigences : FR-011, FR-018, FR-019, FR-021, FR-045.
-  - Vérification : Utiliser densité/concentrations et lois normales prescrites ; vérifier hauteur/growth, comptes conformes, cœur Hcore et Lnear gelé ; refus explicite si contraintes incompatibles. Toute modification des entrées initiales est versionnée avant verdict.
-  - Preuve attendue : Configurations J0, lois/pas/régions et incompatibilités dans evidence/J0/distributions/.
+  - Vérification : Utiliser densité/concentrations et lois normales prescrites ; vérifier hauteur/growth, comptes conformes, cœur Hcore et Lnear gelé ; refus explicite si contraintes incompatibles. Toute modification des entrées initiales est versionnée avant verdict. R3 : Décision U2 déjà figée dans geometry-verification.md §5/R3 : moniteur sans régularisation, arcs séparés aux angles. Exécuter homothéties 0,1/1/10, N/W et Λ=0°/25°/50°, poids curvature_weight=0/1/4, courbure nulle/inflexion et sensibilité sur V-01/02/03. Vérifier caractéristiques immuables et erreurs de quadrature/distribution bornées avant T018 ; aucune dépendance T034/T025 ajoutée à J0.
+  - Preuve attendue : Configurations J0, lois/pas/régions et incompatibilités dans evidence/J0/distributions/. ; matrices de sensibilité/échelle, bornes et positions caractéristiques avant/après
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
 - [ ] T011 IMP — Remplir les cartes du noyau par bandes fixées et TFI, sans lissage masquant une inversion initiale. Fichiers : `src/meshing/transfinite.cpp`; `src/meshing/generate.cpp`; `tests/topology_demo/test_initial_maps.cpp`.
@@ -164,9 +164,9 @@ Préparer les tests avant les composants associés, puis les rejouer à l’acce
   - Preuve attendue : Fixtures/digests, statuts/localisations attendus et premier log de tests dans evidence/US1/corpus/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
-- [ ] T021 [P] [US1] ESS — Préparer les tests de contrats de configuration, rapports et indices d’indications. Fichiers : `tests/contracts/test_unit_schemas.py`; `tests/data/contracts/unit_cases.json`; `tests/contracts/test_representation_schema.py`.
+- [ ] T021 [P] [US1] ESS — Préparer les tests de contrats de configuration, rapports et indices d’indications. Fichiers : `tests/contracts/test_unit_schemas.py`; `tests/data/contracts/unit_cases.json`; `tests/contracts/test_representation_schema.py`. Fichiers complémentaires : `tests/contracts/test_physical_scale_schema.py`; `tests/data/contracts/scale_cases.json`.
   - Dépendances : T019. Exigences : FR-006, FR-008, FR-018, FR-024, FR-026 ; FR-048, FR-049, FR-056, FR-057.
-  - Vérification : Valider les schémas avec jsonschema 2020-12 ; tester champs inconnus, défauts, indices entiers ou {segment_id,t}, nombres non finis et paramètres hors plage. Distinguer forme JSON et invariants numériques à éprouver ensuite. R2 : Préparer les cas schémas 1.2/lecture legacy 1.0, YAML unitaire équivalent, geometry_mode explicite, planar_2d avec Λ=0 et refus des champs de vol/effilement actifs. Ajouter representation.schema.json aux tests.
+  - Vérification : Valider les schémas avec jsonschema 2020-12 ; tester champs inconnus, défauts, indices entiers ou {segment_id,t}, nombres non finis et paramètres hors plage. Distinguer forme JSON et invariants numériques à éprouver ensuite. R2 : Préparer les cas schémas 1.2/lecture legacy 1.0, YAML unitaire équivalent, geometry_mode explicite, planar_2d avec Λ=0 et refus des champs de vol/effilement actifs. Ajouter representation.schema.json aux tests. R3 : Inclure campaign-artifact/physical-scale dans le registre des tests unitaires, configuration audit_profiles, contraintes scale-v1 et refus de curvature_regularization_over_c (même legacy). Préparer les demandes de scale-audit-cases.example.json ; distinguer validation de forme et vérification sémantique future.
   - Preuve attendue : Versions du validateur et résultats positifs/négatifs dans evidence/US1/contracts/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
@@ -188,10 +188,10 @@ Préparer les tests avant les composants associés, puis les rejouer à l’acce
   - Preuve attendue : Candidats, indications, segments avant/après, références et statuts dans evidence/US1/features/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
-- [ ] T025 [US1] IMP — Compléter la résolution des configurations et transformations pour les données importées. Fichiers : `src/io/configuration.cpp`; `src/io/document_reader.cpp`; `cmake/DocumentDependencies.cmake`; `third_party/manifest.json`; `include/aero25d/mesh/configuration.hpp`; `tests/unit/test_resolved_configuration.cpp`; `tests/integration/test_imported_frames.cpp`.
+- [ ] T025 [US1] IMP — Compléter la résolution des configurations et transformations pour les données importées. Fichiers : `src/io/configuration.cpp`; `src/io/document_reader.cpp`; `cmake/DocumentDependencies.cmake`; `third_party/manifest.json`; `include/aero25d/mesh/configuration.hpp`; `tests/unit/test_resolved_configuration.cpp`; `tests/integration/test_imported_frames.cpp`. Fichiers complémentaires : `src/geometry/physical_scale.cpp`; `tests/unit/test_physical_scale.cpp`.
   - Dépendances : T021, T024, T006. Exigences : FR-006, FR-007, FR-009, FR-010, FR-018, FR-030 ; FR-047, FR-048, FR-049, FR-057.
-  - Vérification : Exécuter paramètres négatifs/infinis, incompatibilités, chemins relatifs, unités/échelle et transformation globale un/deux éléments ≤10⁻¹² c. Archiver demandes, omissions et toutes valeurs dérivées sans substitution cachée. R2 : Introduire yaml-cpp 0.8.0 (source/SHA/notices) dans aero25d_document_io après J0 : lecteur JSON/YAML partagé, règles uniques et base des chemins. Valider geometry_mode (planar_2d ⇒ Λ=0), migration legacy archivée et refus UNSUPPORTED_GEOMETRY_MODE/UNSUPPORTED_FLOW_INPUT, sans ignorer de champ actif.
-  - Preuve attendue : Demandé/résolu, chaînes/inverses et résidus par point dans evidence/US1/configuration/.
+  - Vérification : Exécuter paramètres négatifs/infinis, incompatibilités, chemins relatifs, unités/échelle et transformation globale un/deux éléments ≤10⁻¹² c. Archiver demandes, omissions et toutes valeurs dérivées sans substitution cachée. R2 : Introduire yaml-cpp 0.8.0 (source/SHA/notices) dans aero25d_document_io après J0 : lecteur JSON/YAML partagé, règles uniques et base des chemins. Valider geometry_mode (planar_2d ⇒ Λ=0), migration legacy archivée et refus UNSUPPORTED_GEOMETRY_MODE/UNSUPPORTED_FLOW_INPUT, sans ignorer de champ actif. R3 : Résoudre source-scale-v1 depuis c_input=norme BA–milieu des lèvres dans S avant flèche/normalisation. Mètres : k=1, indication seulement contrôlée, |L−c_input|≤1e-10*c_input (0 m absolu), mismatch code2, indécidable code4 ; adimensionnel : k=L/c_input ou unavailable. Archiver méthode/bornes, résidu, tolérances et provenance. Exécuter mètres seuls, cohérent/contradictoire et bord de tolérance, c_input=2,5, absence d’échelle, Λ≠0 et s=7/chord ; aucune double conversion ni corde comprimée. Refuser le paramètre de régularisation retiré avant toute génération.
+  - Preuve attendue : Demandé/résolu, chaînes/inverses et résidus par point dans evidence/US1/configuration/. ; table des cas d’échelle, statuts et résolus complets ; demande legacy conservée avec migration request-1.1-to-1.2-r3
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
 - [ ] T026 [US1] IMP — Reconstruire les arcs cubiques clamped à coins protégés et fournir l’interface de contour du noyau. Fichiers : `src/geometry/reconstruction.cpp`; `src/geometry/bezier.cpp`; `tests/unit/test_reconstruction.cpp`.
@@ -250,26 +250,26 @@ toutes cellules/interfaces et défauts V-08. Les très petits culots E3 peuvent 
 
 - [ ] T034 [US2] IMP — Compléter la redistribution adaptative, les raccords de croissance et les contrôles de chaque paramètre. Fichiers : `src/geometry/redistribution.cpp`; `src/meshing/distributions.cpp`; `tests/integration/test_parameter_effects.cpp`.
   - Dépendances : T033, T027. Exigences : FR-011, FR-012, FR-017, FR-018, FR-019, FR-021.
-  - Vérification : Exécuter une variation à la fois de tous les paramètres FR-018 ; borner quadrature/inversion à 10⁻¹⁰ c et paroi à 10⁻⁵ c ; contrôler compte de couche, croissance, culot/sillage et domaine sans résolution accrue silencieusement.
-  - Preuve attendue : Demandé/résolu, effets mesurés par région et contradictions dans evidence/US2/parameters/.
+  - Vérification : Exécuter une variation à la fois de tous les paramètres FR-018 ; borner quadrature/inversion à 10⁻¹⁰ c et paroi à 10⁻⁵ c ; contrôler compte de couche, croissance, culot/sillage et domaine sans résolution accrue silencieusement. R3 : Réutiliser exactement le moniteur sans régularisation éprouvé à T010 ; pas d’epsilon accepté. Étendre homothéties, N/W, courbures transformées, inflexions et sensitivity curvature_weight=0/1/4 aux splines ; préserver coins/BA/lèvres et stabilité sur V-01/02/03. Le champ retiré est refusé à T025.
+  - Preuve attendue : Demandé/résolu, effets mesurés par région et contradictions dans evidence/US2/parameters/. ; comparatifs de positions/pas et bornes de quadrature par poids/échelle/repère
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
 - [ ] T035 [P] [US2] IMP — Ajouter le lissage elliptique déterministe optionnel sous contraintes strictes. Fichiers : `src/meshing/elliptic_smoothing.cpp`; `tests/unit/test_smoothing_constraints.cpp`.
   - Dépendances : T034, T012, T013. Exigences : FR-014, FR-016, FR-018, FR-022, FR-024.
-  - Vérification : Exécuter relaxations 1/2 à 2⁻²⁰, arrêt déplacement/résidu pendant 5 balayages et maximum 5000 ; geler côtés/interfaces/deux rangées/cœur ; refuser inversion initiale ou non-convergence et recontrôler toutes cellules.
+  - Vérification : Exécuter relaxations 1/2 à 2⁻²⁰, arrêt déplacement/résidu pendant 5 balayages et maximum 5000 ; geler côtés/interfaces/deux rangées/cœur ; refuser inversion initiale ou non-convergence et recontrôler toutes cellules. R3 : Archiver tous paramètres du lissage/arrêt/sélection et la politique qualité effectivement consommée ; rendre leur projection accessible à effective-mesh-v3, sans la confondre avec des audits postérieurs.
   - Preuve attendue : Historique résidu/déplacement et identité des lignes gelées dans evidence/US2/smoothing/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
-- [ ] T036 [US2] IMP — Finaliser le chargement des profils qualité et l’inspecteur exhaustif indépendant, dont fidélité certifiée. Fichiers : `src/quality/profile.cpp`; `src/quality/inspect.cpp`; `tests/unit/test_quality_profile.cpp`.
+- [ ] T036 [US2] IMP — Finaliser le chargement des profils qualité et l’inspecteur exhaustif indépendant, dont fidélité certifiée. Fichiers : `src/quality/profile.cpp`; `src/quality/inspect.cpp`; `tests/unit/test_quality_profile.cpp`. Fichiers complémentaires : `tests/unit/test_independent_audits.cpp`.
   - Dépendances : T032, T034, T035, T028. Exigences : FR-012, FR-019, FR-022, FR-023, FR-024.
-  - Vérification : Exécuter Q1 et conditions enregistrées, métriques locales/agrégées, toutes faces/interfaces et évaluateurs généraux ; rejeter profil/condition inconnus, intervalle indécidable, critique ou raccord incohérent même si génération réussie.
+  - Vérification : Exécuter Q1 et conditions enregistrées, métriques locales/agrégées, toutes faces/interfaces et évaluateurs généraux ; rejeter profil/condition inconnus, intervalle indécidable, critique ou raccord incohérent même si génération réussie. R3 : Séparer la politique de génération des audits audit_profiles immuables ; chaque audit porte profil/limites/méthodes, mesh_digest, clé/version et propre verdict. Tester Q1 passé puis un profil de test complet plus strict échoué sur mêmes nœuds : aucun fichier ni verdict réécrit.
   - Preuve attendue : Profil/digest, comptes contrôlés et tableaux locaux dans evidence/US2/quality/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
-- [ ] T037 [P] [US2] IMP — Ajouter uniquement l’estimation facultative y+ fondée sur u_tau fourni, ν et la distance mesurée. Fichiers : `src/quality/yplus_estimate.cpp`; `tests/unit/test_yplus_estimate.cpp`.
+- [ ] T037 [P] [US2] IMP — Ajouter uniquement l’estimation facultative y+ fondée sur u_tau fourni, ν et la distance mesurée. Fichiers : `src/quality/yplus_estimate.cpp`; `tests/unit/test_yplus_estimate.cpp`. Fichiers complémentaires : `tests/unit/test_yplus_physical_scale.cpp`.
   - Dépendances : T025, T013. Exigences : FR-019, FR-020, FR-030.
-  - Vérification : Exécuter avec/sans échelle et données physiques, valeurs invalides et deux faces aux coins ; formule u_tau*d_center_m/ν, hypothèse uniforme et statut estimate. Aucun Mach/Reynolds/solution ni valeur garantie.
-  - Preuve attendue : Valeurs de référence/calculées et motifs not_requested/unavailable dans evidence/US2/yplus/.
+  - Vérification : Exécuter avec/sans échelle et données physiques, valeurs invalides et deux faces aux coins ; formule u_tau*d_center_m/ν, hypothèse uniforme et statut estimate. Aucun Mach/Reynolds/solution ni valeur garantie. R3 : Consommer physical_scale résolu par T025. d_m=k*d_N, ou k*s*d_W une seule fois. Exécuter mètres seuls, indication cohérente/refusée, c_input=2,5/L=5, absence d’échelle (unavailable sans valeur), flèche et normalisation. Deux u_tau/ν distincts sur mêmes distances donnent deux estimate_key et fichiers ; aucun écrasement de wall_faces d’audit ni de l’autre estimation.
+  - Preuve attendue : Valeurs de référence/calculées et motifs not_requested/unavailable dans evidence/US2/yplus/. ; valeurs indépendantes, conversions N/W et clés/artefacts des deux estimations
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
 - [ ] T038 [US2] EXP — Exécuter E3 et distinguer admissibilité usuelle, refus des limites et éventuelle révision explicite de conception. Fichiers : `tests/integration/run_e3.cpp`; `evidence/US2/E3/experiment.md`; `specs/001-import-maillage-monoelement/mesh-quality.md`.
@@ -315,21 +315,21 @@ But : dossiers complets et parcours CLI/Python concordants, VTP/VTM/VTS qualifi�
 ID résolus, cinq vues, reproduction ≤10⁻¹² c et exécution CPU sans dépendances de tests.
 La méthode `family` est ajoutée et qualifiée dans US4, sans retarder la qualification unitaire.
 
-- [ ] T044 [US3] ESS — Préparer les tests de contrat du bundle, des exports et de la parité CLI/Python. Fichiers : `tests/contracts/test_bundle_schemas.py`; `tests/contracts/test_cli_protocol.py`; `tests/data/contracts/bundle_cases.json`.
+- [ ] T044 [US3] ESS — Préparer les tests de contrat du bundle, des exports et de la parité CLI/Python. Fichiers : `tests/contracts/test_bundle_schemas.py`; `tests/contracts/test_cli_protocol.py`; `tests/data/contracts/bundle_cases.json`. Fichiers complémentaires : `tests/contracts/test_result_records.py`.
   - Dépendances : T043. Exigences : FR-024, FR-026, FR-027, FR-028, FR-029, FR-041, FR-042 ; FR-048, FR-049, FR-056, FR-057.
-  - Vérification : Exercer schémas, corruptions/digests/tailles/chemins et localisations boundary/export_object ; définir assertions stdout JSON unique/stderr et codes. Préparer attentes VTP/VTM/VTS sans les marquer vérifiées avant relecture. R2 : Ajouter schémas de représentation 1.2, associations/tailles de champs, migration explicite des rôles legacy et refus de type physique non supporté.
+  - Vérification : Exercer schémas, corruptions/digests/tailles/chemins et localisations boundary/export_object ; définir assertions stdout JSON unique/stderr et codes. Préparer attentes VTP/VTM/VTS sans les marquer vérifiées avant relecture. R2 : Ajouter schémas de représentation 1.2, associations/tailles de champs, migration explicite des rôles legacy et refus de type physique non supporté. R3 : Préparer les obligations report/manifest 1.2 physical_scale/result_records, les multiples audits/estimations et l’interdiction de valeurs y+ en statut unavailable.
   - Preuve attendue : Cas positifs/négatifs et log initial dans evidence/US3/contracts/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
 - [ ] T045 [US3] IMP — Sérialiser la persistance canonique avec publication atomique et intégrité en réutilisant le SHA-256 de T022. Fichiers : `cmake/PersistenceDependencies.cmake`; `src/io/bundle.cpp`; `src/io/binary_arrays.cpp`; `src/io/sha256.cpp`; `third_party/manifest.json`.
   - Dépendances : T044, T022. Exigences : FR-004, FR-007, FR-024, FR-029, FR-030 ; FR-047, FR-048, FR-056, FR-057.
-  - Vérification : Exécuter lecture/écriture f64le/u64le, offsets/overflow, SHA-256 et fichiers relatifs ; manifeste valid seulement après contrôles ; échec en dossier .invalid, refus d’écrasement et liens sortants. Réutiliser Crypto seulement, sans réseau ni nouvel algorithme SHA-256. R2 : Écrire représentation plane et fields/association/tuple_count dans le manifeste 1.2 ; conserver [N,2] FP64, topology_space logique et migration 1.0 tracée sans inférer de mode conique.
+  - Vérification : Exécuter lecture/écriture f64le/u64le, offsets/overflow, SHA-256 et fichiers relatifs ; manifeste valid seulement après contrôles ; échec en dossier .invalid, refus d’écrasement et liens sortants. Réutiliser Crypto seulement, sans réseau ni nouvel algorithme SHA-256. R2 : Écrire représentation plane et fields/association/tuple_count dans le manifeste 1.2 ; conserver [N,2] FP64, topology_space logique et migration 1.0 tracée sans inférer de mode conique. R3 : Archiver les versions de toutes les clés et source-scale-v1, avec snapshots de génération, audits et estimations séparés ; aucune comparaison legacy fondée sur un nom de profil.
   - Preuve attendue : Bundles valides/invalides, corruptions et logs d’intégrité dans evidence/US3/bundle/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
-- [ ] T046 [US3] IMP — Sérialiser les rapports locaux/agrégés, provenance, repères et les cinq figures complètes. Fichiers : `src/io/report_json.cpp`; `src/io/geometry_json.cpp`; `src/io/svg.cpp`; `tests/contracts/test_report_views.py`.
+- [ ] T046 [US3] IMP — Sérialiser les rapports locaux/agrégés, provenance, repères et les cinq figures complètes. Fichiers : `src/io/report_json.cpp`; `src/io/geometry_json.cpp`; `src/io/svg.cpp`; `tests/contracts/test_report_views.py`. Fichiers complémentaires : `tests/integration/test_result_records.cpp`.
   - Dépendances : T045. Exigences : FR-006, FR-012, FR-019, FR-020, FR-024, FR-028, FR-029 ; FR-048, FR-056.
-  - Vérification : Exécuter relecture Python, données finies/null motivé, report.valid=manifest.valid, comptes exhaustifs ; vérifier profile/BA/BF/wake/global avec styles superposés, IDs, zooms, repères et unités. R2 : Décrire les tableaux de cellules/faces avec association, repère, unités et origine ; garder null motivé lorsque mode/représentation sont inconnus après échec.
+  - Vérification : Exécuter relecture Python, données finies/null motivé, report.valid=manifest.valid, comptes exhaustifs ; vérifier profile/BA/BF/wake/global avec styles superposés, IDs, zooms, repères et unités. R2 : Décrire les tableaux de cellules/faces avec association, repère, unités et origine ; garder null motivé lorsque mode/représentation sont inconnus après échec. R3 : Produire les références immuables d’audits/estimations et physical_scale dans le canonique unitaire ; matérialiser une vue propre au point sans régénérer ni pointer hors bundle. Un rapport d’audit échoué n’altère jamais un autre rapport.
   - Preuve attendue : Rapports JSON/JSONL et cinq SVG annotés dans evidence/US3/reports/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
@@ -353,13 +353,13 @@ La méthode `family` est ajoutée et qualifiée dans US4, sans retarder la quali
 
 - [ ] T050 [US3] IMP — Implémenter la reproduction intégrale depuis les entrées archivées et comparer les données sans réutiliser les nœuds comme entrée. Fichiers : `src/io/reproduction.cpp`; `src/cli/reproduce_command.cpp`; `tests/integration/test_reproduction.cpp`.
   - Dépendances : T045, T049. Exigences : FR-007, FR-026, FR-029 ; FR-057.
-  - Vérification : Exécuter deux générations même version/environnement : paramètres/connectivité/IDs et décisions identiques, résidus ≤10⁻¹² c ; refuser source corrompue ou résolution incompatible. Environnement différent explicitement non comparable. R2 : Comparer les modèles/versions de représentation et règles de migration ; aucun bundle legacy assimilé à un résultat conique ou réutilisé sans compatibilité.
+  - Vérification : Exécuter deux générations même version/environnement : paramètres/connectivité/IDs et décisions identiques, résidus ≤10⁻¹² c ; refuser source corrompue ou résolution incompatible. Environnement différent explicitement non comparable. R2 : Comparer les modèles/versions de représentation et règles de migration ; aucun bundle legacy assimilé à un résultat conique ou réutilisé sans compatibilité. R3 : Ajouter --audit-profile au parcours quality ; nouvel audit distinct, sans modifier la politique qualité ni le verdict archivés. Afficher erreurs PHYSICAL_CHORD_MISMATCH/PHYSICAL_SCALE_UNCERTIFIED/REMOVED_PARAMETER et disponibilité explicite de y+.
   - Preuve attendue : Bundles source/replay et rapport de comparaison dans evidence/US3/reproduction/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
 - [ ] T051 [P] [US3] IMP — Créer le client Python mince, ses résultats/lecteurs séquentiels et exceptions sans logique géométrique. Fichiers : `python/aero25d_mesh/__init__.py`; `python/aero25d_mesh/client.py`; `python/aero25d_mesh/results.py`; `python/aero25d_mesh/errors.py`; `tests/contracts/test_python_client.py`.
   - Dépendances : T049, T050. Exigences : FR-024, FR-026, FR-028, FR-029 ; FR-049, FR-057.
-  - Vérification : Exécuter appels shell=False, fichier/dictionnaire avec base_dir, erreurs 2–8/70, transport malformé et raise_on_error=False ; vérifier grands tableaux via chemins/iterateurs et mêmes rapports sans recalcul favorable. R2 : Relayer syntaxe YAML, geometry_mode, refus actifs et diagnostic INACTIVE_EXTENSION sans supprimer de champ ni calculer une clé/restitution propre.
+  - Vérification : Exécuter appels shell=False, fichier/dictionnaire avec base_dir, erreurs 2–8/70, transport malformé et raise_on_error=False ; vérifier grands tableaux via chemins/iterateurs et mêmes rapports sans recalcul favorable. R2 : Relayer syntaxe YAML, geometry_mode, refus actifs et diagnostic INACTIVE_EXTENSION sans supprimer de champ ni calculer une clé/restitution propre. R3 : Exposer quality(audit_profile=...) et result_records, physical_scale et références d’estimations sans calcul numérique Python ; mêmes erreurs et aucun audit écrasé.
   - Preuve attendue : Comparaisons CLI/Python et erreurs/rapports conservés dans evidence/US3/python/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
@@ -381,9 +381,9 @@ La méthode `family` est ajoutée et qualifiée dans US4, sans retarder la quali
   - Preuve attendue : Procès-verbal d’ouverture, captures global/BA/lèvres et conclusion humaine explicite.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
-- [ ] T055 [US3] ACC — Exécuter V-09 pour la parité complète des parcours unitaires, refus, exports, figures et reproduction. Fichiers : `tests/contracts/test_python_cli_parity.py`; `tests/integration/test_v09.cpp`.
+- [ ] T055 [US3] ACC — Exécuter V-09 pour la parité complète des parcours unitaires, refus, exports, figures et reproduction. Fichiers : `tests/contracts/test_python_cli_parity.py`; `tests/integration/test_v09.cpp`. Fichiers complémentaires : `tests/contracts/test_scale_audit_cli_python_parity.py`.
   - Dépendances : T050, T051, T053, T054. Exigences : FR-020, FR-024, FR-026, FR-027, FR-028, FR-029, FR-041, FR-042, FR-043, FR-044; SC-005, SC-006, SC-008 ; FR-047, FR-049, FR-056, FR-057; SC-009.
-  - Vérification : Exécuter V-01/V-03 et refus V-04/V-06 via CLI/Python ; mêmes statuts, connectivités/IDs et mesures à la tolérance archivée ; cinq vues et références lisibles. Inclure avec/sans u_tau, ν et échelle physique pour l’estimation facultative FR-020. Les familles seront complétées en US4. R2 : Comparer JSON/YAML, modèles explicites, mapping S/N et refus coniques/vol actifs depuis CLI/Python ; inclure V-11 et les associations.
+  - Vérification : Exécuter V-01/V-03 et refus V-04/V-06 via CLI/Python ; mêmes statuts, connectivités/IDs et mesures à la tolérance archivée ; cinq vues et références lisibles. Inclure avec/sans u_tau, ν et échelle physique pour l’estimation facultative FR-020. Les familles seront complétées en US4. R2 : Comparer JSON/YAML, modèles explicites, mapping S/N et refus coniques/vol actifs depuis CLI/Python ; inclure V-11 et les associations. R3 : Comparer CLI/Python sur tous cas source-scale-v1, paramètre retiré, même maillage avec audits différents et estimations différentes ; comparer clés, verdicts et références propres à chaque contexte.
   - Preuve attendue : Transcriptions comparées et dossier de preuve V-09 dans evidence/US3/parity/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
@@ -460,9 +460,9 @@ reprise compatible et synthèse par point, via noyau partagé. Aucune campagne d
 **Test indépendant** : T075–T078, V-10, 18 points attendus, déduplication d’incidence,
 interruption/reprise avec mutations, politiques d’échec et parité CLI/Python.
 
-- [ ] T066 [US5] ESS — Préparer les contrats de campagne JSON/YAML, inventaire, clés et reprise avec cas V-10 attendus. Fichiers : `tests/contracts/test_campaign_schemas.py`; `tests/data/V10/`; `tests/data/contracts/campaign_cases.json`.
+- [ ] T066 [US5] ESS — Préparer les contrats de campagne JSON/YAML, inventaire, clés et reprise avec cas V-10 attendus. Fichiers : `tests/contracts/test_campaign_schemas.py`; `tests/data/V10/`; `tests/data/contracts/campaign_cases.json`. Fichiers complémentaires : `tests/contracts/test_campaign_artifact_schema.py`; `tests/data/V10/scale-audit-cases.json`.
   - Dépendances : T064. Exigences : FR-031, FR-032, FR-034, FR-035, FR-036, FR-037, FR-039, FR-040; SC-007 ; FR-049, FR-057.
-  - Vérification : Préparer V-01/V-02 × trois flèches × trois niveaux (18 points) et liste équivalente, points V-03 avec configuration épaisse distincte, doublons d’incidence, défauts/types futurs, interruption et matrice de mutations ; valider formes/schema et oracles de comptage sans le futur exécuteur. R2 : Préparer V-11 et les mutations mode/transformation/version, champs de vol/effilement actifs refusés, extension inactive signalée ; aucun schéma métrique conique détaillé.
+  - Vérification : Préparer V-01/V-02 × trois flèches × trois niveaux (18 points) et liste équivalente, points V-03 avec configuration épaisse distincte, doublons d’incidence, défauts/types futurs, interruption et matrice de mutations ; valider formes/schema et oracles de comptage sans le futur exécuteur. R2 : Préparer V-11 et les mutations mode/transformation/version, champs de vol/effilement actifs refusés, extension inactive signalée ; aucun schéma métrique conique détaillé. R3 : Préparer les formes campaign-artifact/physical-scale et scénarios U1/U3 : même génération/deux audits, deux y+, audit passé/échoué coexistants, toutes interruptions de couche et politique qualité modifiant le lissage. Les attendus de ces fixtures ne sont pas des résultats produits.
   - Preuve attendue : Demandes, attendus/étapes et log initial dans evidence/US5/contracts/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
@@ -474,13 +474,13 @@ interruption/reprise avec mutations, politiques d’échec et parité CLI/Python
 
 - [ ] T068 [US5] IMP — Développer produit cartésien ou points explicites et résoudre les paramètres en réutilisant le noyau/F1. Fichiers : `src/campaign/expand.cpp`; `src/campaign/resolve.cpp`; `tests/unit/test_campaign_expansion.cpp`.
   - Dépendances : T067, T060. Exigences : FR-031, FR-032, FR-036, FR-037, FR-040 ; FR-048, FR-049, FR-057.
-  - Vérification : Exécuter ordre déterministe, références/ID/listes/overflow, substitutions profil/flèche/niveau et configurations thin/thick compatibles ; 18 points attendus, mêmes paramètres pour liste équivalente. Aucun algorithme de distribution copié. R2 : Conserver et valider mode/représentation effectifs de chaque configuration ; ne pas supprimer les champs non supportés avant contrôle/développement.
+  - Vérification : Exécuter ordre déterministe, références/ID/listes/overflow, substitutions profil/flèche/niveau et configurations thin/thick compatibles ; 18 points attendus, mêmes paramètres pour liste équivalente. Aucun algorithme de distribution copié. R2 : Conserver et valider mode/représentation effectifs de chaque configuration ; ne pas supprimer les champs non supportés avant contrôle/développement. R3 : Appliquer la surcharge profiles[].physical_chord_m (null annule, omission conserve) avant validation propre au point ; ne pas hériter d’une échelle valide par partage de nœuds.
   - Preuve attendue : Inventaires résolus, substitutions et erreurs de référence dans evidence/US5/expansion/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
 - [ ] T069 [US5] IMP — Définir les identités effectives, la mutualisation par maillage et les critères stricts de compatibilité. Fichiers : `src/campaign/effective_key.cpp`; `src/campaign/compatibility.cpp`; `tests/unit/test_effective_key.cpp`.
   - Dépendances : T068, T045. Exigences : FR-034, FR-036, FR-039, FR-040 ; FR-048, FR-049, FR-057.
-  - Vérification : Exécuter sérialisation effective-mesh-v3 : valeurs résolues/omissions équivalentes et incidence descriptive partagent mesh_key ; chaque paramètre géométrique/version pertinent le change. reuse_key ajoute qualité/environnement/ressources/exports. Données de vol inactives et y+ ne régénèrent pas la géométrie. R2 : Passer à effective-mesh-v3 : modèles/versions de représentation, transformations/bases et métriques planes effectives. À Λ=0 les deux modes plans ne partagent un maillage que si toute géométrie effective est identique ; conserver les modes demandés en provenance. Un mesh_key ne sert pas de cache de solution futur.
+  - Vérification : Exécuter les règles result-identities.md : canonical-json-f64-v1, effective-mesh-v3/generation-quality-v1, generated-mesh-v1, mesh-audit-v1, physical-yplus-v1 et point-result-v1. Tester chaque champ consommé par construction/lissage/arrêt/sélection : sa modification change mesh_key. Changer seulement audit_profiles conserve mesh_key mais change audit_key/reuse_key ; changer ν/u_tau/échelle physique seule change estimate_key/contexte sans régénérer. Incidences descriptives partagées, provenance conservée. Avant génération : mesh_digest et clés dépendantes null, jamais simulés. Versions inconnues/champs non classés refusés ; aucune clé de solution future.
   - Preuve attendue : Vecteurs de clés, classification exhaustive des champs et matrice de compatibilité dans evidence/US5/identity/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
@@ -490,27 +490,27 @@ interruption/reprise avec mutations, politiques d’échec et parité CLI/Python
   - Preuve attendue : Instantané/CSV, compteurs d’appels et diagnostics par point dans evidence/US5/check/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
-- [ ] T071 [US5] IMP — Implémenter l’exécution séquentielle et les commits progressifs, avec les deux politiques d’échec explicites. Fichiers : `src/campaign/runner.cpp`; `src/campaign/state_store.cpp`; `tests/integration/test_campaign_failure_policy.cpp`.
-  - Dépendances : T070, T040, T048. Exigences : FR-033, FR-035, FR-036, FR-040.
-  - Vérification : Exécuter une seule génération active, bundle unique par mesh_key, contexte par point et y+ post-traité sans maillage supplémentaire ; publier état/CSV atomiquement par point et events.jsonl. continue tente le suivant, stop écrit not_run ; code global non nul et échec partagé sans boucle sur doublons.
-  - Preuve attendue : Journaux, compteurs d’appels, snapshots avant/après et sorties valides/invalides dans evidence/US5/run/.
+- [ ] T071 [US5] IMP — Implémenter l’exécution séquentielle et les commits progressifs, avec les deux politiques d’échec explicites. Fichiers : `src/campaign/runner.cpp`; `src/campaign/state_store.cpp`; `tests/integration/test_campaign_failure_policy.cpp`. Fichiers complémentaires : `src/campaign/artifact_store.cpp`; `tests/integration/test_campaign_shared_results.cpp`.
+  - Dépendances : T070, T040, T048, T036, T037. Exigences : FR-020, FR-023, FR-024, FR-033, FR-035, FR-036, FR-038, FR-040.
+  - Vérification : Exécuter une seule génération active par mesh_key, puis commits distincts meshes/audits/estimates/points selon result-identities.md. Persister plusieurs audits et estimations, snapshots/digests/références typées, failed_stage et état/CSV/events atomiques. Même génération avec Q1 passé et audit strict échoué : point strict failed/code6, premier verdict inchangé, nœuds générés conservés. Terminer les audits requis du point avant stop/continue entre points ; doublons d'échec sans boucle. Estimation unavailable faute d'échelle : aucun y+ ni échec géométrique ; estimation failed : point failed. Vérifier interruption avant/après chaque commit et intégrité des références. R3 : Vérifier la cohérence campagne-state/descripteurs/summary et l’absence de bundle universel : le bundle matérialisé appartient au point.
+  - Preuve attendue : Journaux, compteurs d’appels, snapshots avant/après et sorties valides/invalides dans evidence/US5/run/. ; digests des nœuds communs, audits pass/fail coexistants, deux fichiers y+ et références de chaque point
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
 - [ ] T072 [US5] IMP — Implémenter la reprise et le verrou d’écrivain avec conservation des tentatives et intégrité stricte. Fichiers : `src/campaign/resume.cpp`; `src/campaign/lock.cpp`; `tests/integration/test_campaign_resume.cpp`.
   - Dépendances : T071, T069. Exigences : FR-033, FR-034, FR-036, FR-037, FR-040 ; FR-057.
-  - Vérification : Exécuter arrêt avant/après publication, CSV ancien/journal tronqué, bundle corrompu et source/paramètre/version/environnement/qualité modifiés. Réutiliser seulement completed valide compatible ; retenter les autres dans nouveau dossier, conserver motif/historique ; détecter verrou concurrent et incompatibilité resume/replace. R2 : Muter séparément modèle, transformation, version de résolution et migration legacy ; aucune reprise incompatible.
+  - Vérification : Exécuter toutes interruptions avant/après commits génération/audit/estimation/point et état/CSV, journal tronqué, corruptions et mutations indépendantes de chaque couche. Précontrôler chaque point (dont cohérence physique). Réutiliser la génération complète compatible même si le point avait échoué à un audit ; ne jamais promouvoir ce point en reused. Relire un audit échoué compatible garde son échec ; --resume --retry-failed crée une nouvelle tentative, conserve l'ancienne et n'écrase aucun verdict. Audit/estimation nouveaux sans nouvelles coordonnées ; réglage de lissage/arrêt ou qualité de génération nouveau ⇒ nouvelle mesh_key. Versions exactes et digests contrôlés, pas d'assimilation v1/v2/v3 ; verrou concurrent et resume/replace refusés.
   - Preuve attendue : Matrice de reprise, preuves anciennes/nouvelles et décisions dans evidence/US5/resume/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
 - [ ] T073 [US5] IMP — Ajouter les commandes campagne comme présentation de l’orchestrateur C++ et ses codes globaux. Fichiers : `src/cli/campaign_command.cpp`; `tests/contracts/test_campaign_cli.py`.
   - Dépendances : T070, T071, T072. Exigences : FR-026, FR-031, FR-032, FR-033, FR-034, FR-035, FR-036, FR-037, FR-039 ; FR-049, FR-057.
-  - Vérification : Exécuter campaign check/run/--resume, stdout enveloppe campaign-state et stderr progression ; code 0/2/6/7/8/70, codes unitaires conservés ; chemins CLI relatifs cwd, références internes relatives aux documents. R2 : Retourner l’enveloppe 1.2, codes unitaires spécifiques et diagnostic visible de non-exécution des extensions futures.
+  - Vérification : Exécuter campaign check/run/--resume, stdout enveloppe campaign-state et stderr progression ; code 0/2/6/7/8/70, codes unitaires conservés ; chemins CLI relatifs cwd, références internes relatives aux documents. R2 : Retourner l’enveloppe 1.2, codes unitaires spécifiques et diagnostic visible de non-exécution des extensions futures. R3 : Tester --resume --retry-failed (refus sans resume), colonnes/références propres aux couches et failed_stage ; stdout conserve les audits échoués et estimations indisponibles.
   - Preuve attendue : Transcriptions et validations de chaque enveloppe dans evidence/US5/cli/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
 - [ ] T074 [US5] IMP — Ajouter CampaignResult et les méthodes Python de contrôle/exécution/reprise sans boucle ni calcul de clés propre. Fichiers : `python/aero25d_mesh/campaign.py`; `python/aero25d_mesh/client.py`; `tests/contracts/test_campaign_python.py`.
   - Dépendances : T073, T051. Exigences : FR-026, FR-032, FR-034, FR-038, FR-040 ; FR-049.
-  - Vérification : Exécuter fichiers JSON/YAML et dictionnaire avec base_dir obligatoire, raise_on_error et erreurs de transport ; inventaire/CSV/cas accessibles, état global et erreurs unitaires intacts. Le binaire reste seul orchestrateur. R2 : Parité des refus de modes/vol actifs et du diagnostic d’extension inactive ; aucun décodeur ou calcul de pression conique dans le wrapper.
+  - Vérification : Exécuter fichiers JSON/YAML et dictionnaire avec base_dir obligatoire, raise_on_error et erreurs de transport ; inventaire/CSV/cas accessibles, état global et erreurs unitaires intacts. Le binaire reste seul orchestrateur. R2 : Parité des refus de modes/vol actifs et du diagnostic d’extension inactive ; aucun décodeur ou calcul de pression conique dans le wrapper. R3 : Exposer retry_failed=False avec même contrainte resume ; comparer audit/estimate/point refs, clés, disponibilité d’échelle et échecs sans second orchestrateur Python.
   - Preuve attendue : Appels et rapports/erreurs comparés dans evidence/US5/python/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
@@ -520,15 +520,15 @@ interruption/reprise avec mutations, politiques d’échec et parité CLI/Python
   - Preuve attendue : Inventaires/CSV comparés, compteurs et références résolues dans evidence/US5/inventory-acceptance/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
-- [ ] T076 [US5] ACC — Qualifier exécution, progression, échecs et reprise après interruption et mutations, depuis CLI et Python. Fichiers : `tests/integration/test_campaign_acceptance.py`; `tests/integration/test_campaign_crash_recovery.cpp`.
+- [ ] T076 [US5] ACC — Qualifier exécution, progression, échecs et reprise après interruption et mutations, depuis CLI et Python. Fichiers : `tests/integration/test_campaign_acceptance.py`; `tests/integration/test_campaign_crash_recovery.cpp`. Fichiers complémentaires : `tests/integration/test_campaign_shared_audits.py`; `tests/integration/test_campaign_shared_estimates.py`.
   - Dépendances : T072, T074, T075. Exigences : FR-033, FR-034, FR-035, FR-036, FR-038, FR-040; SC-007 ; FR-049, FR-057.
-  - Vérification : Exécuter échec médian sous continue/stop, interruptions contrôlées avant/après commit et toutes mutations de compatibilité ; compter générations uniques et réutilisations. Aucun incompatible/partiel repris comme valide, preuves conservées, état/CSV réconciliés. R2 : Inclure la matrice de compatibilité R2 ; conserver la déduplication d’incidence descriptive, sans confondre clé de maillage et futur cas de vol/solution.
-  - Preuve attendue : Matrice attendus/observés, journaux et historique complet dans evidence/US5/execution-acceptance/.
+  - Vérification : Exécuter échec médian sous continue/stop, interruptions contrôlées avant/après commit et toutes mutations de compatibilité ; compter générations uniques et réutilisations. Aucun incompatible/partiel repris comme valide, preuves conservées, état/CSV réconciliés. R2 : Inclure la matrice de compatibilité R2 ; conserver la déduplication d’incidence descriptive, sans confondre clé de maillage et futur cas de vol/solution. R3 : Exécuter tous scénarios scale-audit-cases.example.json : même maillage avec deux audits, avec deux estimations, pass/fail sur mêmes nœuds, commits interrompus puis reprise, mutation de politique qualité influençant réellement le lissage, audit-only sans régénération et parité CLI/Python. Assert génération=1 quand compatible, résultats distincts, aucun verdict écrasé/hérité ; conserver échecs avant retry-failed et contradictions d’échelle même sur nœuds déjà disponibles.
+  - Preuve attendue : Matrice attendus/observés, journaux et historique complet dans evidence/US5/execution-acceptance/. ; matrice par couche des clés/compteurs/statuts, copies avant/après et hash des preuves immuables
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
 - [ ] T077 [US5] ACC — Vérifier les exports de cas partagés, les liens diagnostics et l’autonomie CPU des campagnes installées. Fichiers : `tests/qualification/test_campaign_exports.py`; `tests/qualification/test_installed_campaign.py`.
   - Dépendances : T076, T053, T058, T065. Exigences : FR-030, FR-036, FR-037, FR-038, FR-040, FR-041, FR-042, FR-043; SC-007, SC-008 ; FR-048, FR-056, FR-057.
-  - Vérification : Exécuter campagne fin/épais, relire VTP/VTM/VTS indépendamment et déplacer le dossier ; points partagés résolvent le même bundle sans confusion de métadonnées. Rejouer exécution produit sans dépendance VTK/Python de calcul ni solveur installé. R2 : Contrôler associations et représentations des cas partagés, dtype FP64 et absence de champ aérodynamique/conique fictif.
+  - Vérification : Exécuter campagne fin/épais, relire VTP/VTM/VTS indépendamment et déplacer le dossier ; points partagés résolvent le même mesh_artifact et leurs propres audits/estimations, sans confusion de métadonnées. Rejouer exécution produit sans dépendance VTK/Python de calcul ni solveur installé. R2 : Contrôler associations et représentations des cas partagés, dtype FP64 et absence de champ aérodynamique/conique fictif.
   - Preuve attendue : Rapports de relecture, audit des chemins/IDs et transcript autonome dans evidence/US5/exports/.
   - Statut réel : prévu, non exécuté ; aucune validation produit ; démarrage suspendu pendant la réconciliation.
 
@@ -608,7 +608,7 @@ conditionnel sur fin/épais, pentes non nulles/limite nulle, mapping line of fli
 
 - [ ] T088 [US6] ACC — Tenir la revue G-FORM et consigner le go/no-go de la décision D-10 avant tout contrat métrique détaillé. Fichiers : `specs/001-import-maillage-monoelement/conical-study.md`; `evidence/conical/science/decision.md`.
   - Dépendances : T084, T085, T086, T087. Exigences : FR-050, FR-051, FR-052, FR-054, FR-055, FR-058; SC-010.
-  - Vérification : Revoir toutes rubriques du tableau G-FORM avec auteur/relecteur scientifique identifiés : similitude, section, données, dérivées, viscosité/SA-neg, métriques nécessaires, restrictions, restitution et validation. Go seulement si fermeture cohérente et limites justifiées ; sinon no-go motivé et tâches suivantes bloquées.
+  - Vérification : Revoir toutes rubriques du tableau G-FORM avec auteur/relecteur scientifique identifiés : similitude, section, données, dérivées, viscosité/SA-neg, métriques nécessaires, restrictions, restitution et validation. Go seulement si fermeture cohérente et limites justifiées ; sinon no-go motivé, T089–T094 non applicables à cette décision et bilan T095 sans leur exécution. Si la revue est encore ouverte, ces tâches restent bloquées. Ne jamais cocher une tâche non applicable comme réalisée. Conserver les dérivations, raisons, limites et travaux non exécutés.
   - Preuve attendue : Décision datée/versionnée, commentaires de revue, équations et limitations acceptées
   - Statut réel : prévu, non exécuté ; G-FORM OUVERT, aucun go allégué.
 
@@ -616,36 +616,42 @@ conditionnel sur fin/épais, pentes non nulles/limite nulle, mapping line of fli
   - Dépendances : T088 avec go G-FORM, T019 avec go J0, T043. Exigences : FR-048, FR-051, FR-052, FR-053, FR-056; SC-011.
   - Vérification : Dériver de la formulation retenue les coordonnées/immersion, bases/mapping et seules métriques/variations nécessaires ; définir unités, non-singularité, bornes et tolérances numériques avant génération. Ne pas recopier [N,2], Q1 ou facteurs d’extrusion sans justification ; future API produit conique toujours non disponible.
   - Preuve attendue : Contrat dérivé/versionné, critères chiffrés et liens vers la décision scientifique
+  - Applicabilité : branche go seulement ; sur no-go terminal T088, non applicable à cette décision, case ouverte et motif conservé.
   - Statut réel : bloqué par G-FORM ; fichier de contrat conique détaillé volontairement non créé.
 
 - [ ] T090 [US6] ESS — Préparer les oracles géométriques indépendants et cas fin/épais coniques du jalon JG-C. Fichiers : `tests/conical_geometry/analytic_oracles.cpp`; `tests/data/conical/case-definitions.json`; `tests/conical_geometry/test_geometry_contract.cpp`.
   - Dépendances : T089. Exigences : FR-047, FR-051, FR-052, FR-053, FR-054; SC-011.
   - Vérification : Préparer pente non nulle, séquence de pentes tendant vers zéro, données incohérentes/apex interdit et correspondances source/physique. Oracles de mappings, mesures et scalaire synthétique connu indépendants du générateur ; aucun faux p/Cp ni résultat RANS.
   - Preuve attendue : Définitions/digests, expressions analytiques et erreurs/bornes attendues
+  - Applicabilité : branche go seulement ; sur no-go terminal T088, non applicable à cette décision, case ouverte et motif conservé.
   - Statut réel : bloqué par T089 et go scientifique ; aucun fixture/essai créé.
 
 - [ ] T091 [US6] IMP — Construire uniquement le démonstrateur géométrique conique isolé selon le contrat accepté. Fichiers : `src/experiments/conical/geometry_demo.cpp`; `tests/conical_geometry/CMakeLists.txt`; `tests/conical_geometry/test_demo.cpp`.
   - Dépendances : T090, T089, T019 avec go J0. Exigences : FR-047, FR-048, FR-052, FR-053, FR-056.
   - Vérification : Implémenter mappings/immersion et métriques dérivées sans solveur ; préserver indices/interfaces, source originale et chemin plan simple. Toute réutilisation des 4/5 blocs doit être éprouvée, pas déclarée acquise. Exporter physique et logique/déplié séparément, coordonnées FP64 et associations explicites ; enregistrer les tests sans dépendance de J0.
   - Preuve attendue : Sources du démonstrateur, logs, représentations physiques et correspondances identifiées
+  - Applicabilité : branche go seulement ; sur no-go terminal T088, non applicable à cette décision, case ouverte et motif conservé.
   - Statut réel : bloqué par décision/contrat ; non implémenté, hors commandes produit planes.
 
 - [ ] T092 [US6] EXP — Exécuter l’expérience géométrique conique fin/épais et sa limite vers l’extrusion. Fichiers : `tests/conical_geometry/run_experiment.cpp`; `evidence/conical/geometry/experiment.md`.
   - Dépendances : T091. Exigences : FR-047, FR-051, FR-053, FR-054, FR-056.
   - Vérification : Comparer oracles sur pentes non nulles et séquence →0 : mapping/inverse, raccords/orientations, métriques non singulières, restitution de géométrie et scalaire synthétique. Mesurer bornes et vues, relire exports indépendamment ; conserver échecs sans relâcher critères.
   - Preuve attendue : Mesures/certificats, erreurs de limite, exports et preuves négatives
+  - Applicabilité : branche go seulement ; sur no-go terminal T088, non applicable à cette décision, case ouverte et motif conservé.
   - Statut réel : bloqué par construction conditionnelle ; aucune expérience exécutée.
 
 - [ ] T093 [US6] ACC — Qualifier JG-C géométrique avec revue de ses preuves, distincte de J0 et du futur RANS. Fichiers : `tests/conical_geometry/test_jgc_acceptance.cpp`; `evidence/conical/geometry/decision.md`.
   - Dépendances : T092, T088 avec go G-FORM, T053. Exigences : FR-047, FR-048, FR-052, FR-053, FR-054, FR-056, FR-059; SC-011.
   - Vérification : Exécuter fin/épais et toutes limites figées par T089, contrôles exhaustifs de raccords et mesures, relecture VTK/PyVista et ouverture ParaView des représentations physiques/logiques. Go géométrique seulement si tous critères passent ; échec n’annule ni ne qualifie artificiellement J0 plan.
   - Preuve attendue : Verdict JG-C daté avec domaine géométrique prouvé, limites et aucune revendication de solution
+  - Applicabilité : branche go seulement ; sur no-go terminal T088, non applicable à cette décision, case ouverte et motif conservé.
   - Statut réel : bloqué par G-FORM/JG-C ; aucune qualification conique.
 
 - [ ] T094 [US6] ESS — Actualiser le programme futur de vérification des équations et campagnes de résolution sans les implémenter. Fichiers : `docs/product-roadmap.md`; `specs/001-import-maillage-monoelement/verification.md`; `evidence/conical/science/future-verification.md`.
   - Dépendances : T088 avec go G-FORM. Exigences : FR-046, FR-051, FR-054, FR-055, FR-057, FR-058.
   - Vérification : Affecter à FUT-01–07 métriques/conservation, uniforme cartésien en base variable, limite 2.5D, solutions manufacturées visqueuses/SA-neg, références indépendantes Cp/Cf/efforts et erreurs numériques/modèle séparées. Décrire futurs tuples Mach/Re/T et clés de solution avec contrôles de cohérence, aucun champ actif ni code RANS dans 001.
   - Preuve attendue : Plan de validation/futurs contrats et dépendances explicités, sans résultats inventés
+  - Applicabilité : branche go seulement ; sur no-go terminal T088, non applicable à cette décision, case ouverte et motif conservé.
   - Statut réel : prévu, dépendant du go scientifique pour les choix détaillés ; travaux d’équations différés.
 
 ## Phase 10 — Revue transversale de la fonctionnalité réconciliée
@@ -653,10 +659,10 @@ conditionnel sur fin/épais, pentes non nulles/limite nulle, mapping line of fli
 La décision suivante porte les deux lots et leurs limites, sans modifier la portée du go J0.
 
 - [ ] T095 ACC — Conclure séparément les deux lots de 001 et la réconciliation de leurs preuves, sans déclarer le solveur livré. Fichiers : `evidence/final/reconciled-decision.md`; `specs/001-import-maillage-monoelement/reconciliation.md`; `specs/001-import-maillage-monoelement/tasks-analysis.md`.
-  - Dépendances : T083, T088, T093, T094. Exigences : FR-046 à FR-060; SC-001 à SC-012.
-  - Vérification : Auditer les 60 FR/12 SC et PR courantes/futures ; lot A accepté seulement sur preuves planes, lot B sur go scientifique et JG-C. Si G-FORM no-go ou preuve absente, conserver lot B incomplet/bloqué et les acquis plans distincts. Les équations, pressions, coefficients et CUDA futurs ne sont jamais marqués livrés par 001.
+  - Dépendances : communs : T083 (résultat documenté) et T088 (décision terminale go ou no_go). Branche go uniquement : résultats applicables T093 et T094. Branche no_go : aucune dépendance à l'exécution de T089–T094. Exigences : FR-046 à FR-060; SC-001 à SC-012.
+  - Vérification : Auditer 60 FR/12 SC et capacités futures. Après go G-FORM, examiner T089–T094 et n'accepter la géométrie que sur JG-C réellement passé ; échec/manque de preuve ⇒ lot incomplet, jamais qualifié. Après no-go, publier bilan study_completed_no_go : résultats T084–T088, raisons scientifiques, restrictions, limites et liste T089–T094 non exécutées/non applicables (cases ouvertes) ; ni JG-C ni programme détaillé dépendant du go exigés pour ce bilan. Lot plan jugé séparément selon T083. Décision encore ouverte ⇒ T095 bloquée. Exercer les deux branches sur dossiers documentaires fictifs explicitement étiquetés comme tels : fermeture possible/no-go, pas de faux succès, absence de dépendance bloquante à la branche désactivée. Aucune résolution/pression/coefficient/CUDA livré par 001.
   - Preuve attendue : Décision datée des deux lots, écarts/revalidation et domaine réellement vérifié
-  - Statut réel : prévu, bloqué tant que les acceptations requises ne sont pas exécutées.
+  - Statut réel : prévu ; bloqué actuellement par décisions T083/T088 non exécutées ; après no_go, aucune attente T089–T094.
 
 ## Passage J0 — premier groupe exécutable
 
@@ -713,10 +719,11 @@ flowchart LR
   G --> I
   C --> S[Étude T084–T088]
   S -->|go G-FORM seulement| K[Contrat puis JG-C T089–T093]
-  S --> V[Programme futur T094]
+  S -->|go G-FORM seulement| V[Programme futur T094]
   I --> Z[Décision séparée T095]
-  K --> Z
-  V --> Z
+  K -->|si go: résultats applicables| Z
+  V -->|si go: résultat applicable| Z
+  S -->|no-go: bilan et non-applicabilité sans K ni V| Z
 ```
 
 L’implémentation de F1 peut commencer après US2 pendant les travaux unitaires US3 ; son
@@ -783,3 +790,22 @@ périmètre : reprendre les essais explicités, sans effacer leur historique. Le
 T001–T083 et FR-001–060 se trouve dans reconciliation.md ; les nouveaux IDs sont T084–T095.
 La présente liste est la seule liste active de réalisation 001, sans workflow automatique
 vers speckit-implement. Les travaux FUT de la roadmap restent des fonctionnalités futures.
+
+## R3 — ordonnancement conditionnel et historique conservé
+
+T001–T095 restent tous ouverts ; aucune exigence n'est vérifiée par ces modifications.
+U2 est une décision documentaire résolue avant T010 ; ses essais entrent dans T010/J0,
+sans dépendance envers T025/T034. U3 est résolu par T025, utilisé T037 puis comparé par
+CLI/Python T055/T074/T076. U1 est réparti entre audit/estimation T036/T037, contrats/stockage
+T044–T046, clés T069, commits T071, reprise T072 et acceptation T076.
+
+| Décision terminale T088 | Sous-graphe applicable | Préalables du bilan T095 | Portée de clôture |
+| --- | --- | --- | --- |
+| go | T089→T090→T091→T092→T093 ; T094 après T088 | T083, T088, résultats T093/T094 | Géométrie qualifiée seulement si JG-C passe ; sinon bilan avec lot incomplet |
+| no_go | T084–T088 seulement ; T089–T094 non applicables à cette décision | T083, T088 ; aucun T089–T094 requis | Bilan scientifique terminé, construction non exécutée, aucune qualification conique |
+| ouverte (état actuel) | T089–T094 bloquées | T095 reste bloquée | Aucune clôture scientifique anticipée |
+
+Un résultat terminal documenté ne signifie pas une acceptation réussie : échec et absence de
+preuve restent visibles. La branche no_go n'utilise pas des cases cochées pour simuler les
+préalables de la branche go. La correspondance R2→R3 et les revalidations requises figurent
+dans reconciliation.md ; aucun identifiant supprimé ou réutilisé.

@@ -66,3 +66,12 @@ Voir [tasks-analysis.md](../tasks-analysis.md) pour la matrice détaillée et le
 
 La revue documentaire n’accepte ni formulation, ni maillage, ni solution. L’analyse courante
 et ses contrôles exécutés sont dans tasks-analysis.md ; l’historique R1 ci-dessus reste daté.
+
+## Révision R3 — compléments à relire avant réalisation
+
+Les cinq écarts U1/I1/U2/U3/I2 sont traités dans les contrats 1.2 et reconciliation.md :
+clés génération/audits/estimations/points, bilan go/no_go exécutable, paramètre de
+régularisation retiré, échelle originale unique et historique constitution corrigé dans
+le plan. Les 60 FR, 12 SC et T001–T095 sont conservés ; les essais R3 de verification.md
+restent **prévus et non exécutés**. Cette note n'ajoute aucune case de réussite produit
+et ne ferme pas G-FORM. La constitution et les limites Q1 sont inchangées pendant R3.

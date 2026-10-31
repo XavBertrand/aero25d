@@ -1,3 +1,9 @@
+> Historique R2 conservé. Les cinq écarts U1/I1/U2/U3/I2 du rapport suivant sont
+> corrigés par R3 dans [reconciliation.md](reconciliation.md#r3--correction-des-cinq-écarts).
+> Les versions 1.1, comptes de schémas et graphe décrits ci-dessous concernent R2.
+> La nouvelle invocation speckit-analyze est rendue en lecture seule dans la réponse ;
+> ce fichier n'est pas présenté comme sa sortie ni comme une preuve produit.
+
 # Specification Analysis Report — réconciliation R2
 
 **Date** : 2026-10-31. **Mécanisme** : speckit-analyze installé (Spec Kit 0.15.1), après
